@@ -1,0 +1,70 @@
+// 1. Cargar pacientes guardados al abrir la web
+document.addEventListener('DOMContentLoaded', () => {
+    const almacenados = JSON.parse(localStorage.getItem('pacientesDatos')) || [];
+    almacenados.forEach(p => insertarFila(p));
+});
+
+// 2. Escuchar el formulario
+document.getElementById('formPaciente').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const paciente = {
+        id: Date.now(),
+        nombre: document.getElementById('nombre').value,
+        dni: document.getElementById('dni').value,
+        fecha: document.getElementById('fechaNacimiento').value,
+        tel: document.getElementById('telefono').value,
+        barrio: document.getElementById('barrio').value, // Nuevo campo
+        obraSocial: document.getElementById('obraSocial').value, // Nuevo campo
+        tratamiento: document.getElementById('tratamiento').value
+    };
+
+    insertarFila(paciente);
+    guardarEnLocalStorage(paciente);
+    this.reset();
+});
+
+function insertarFila(p) {
+    const lista = document.getElementById('listaPacientes');
+    const fila = document.createElement('tr');
+    fila.setAttribute('data-id', p.id);
+    
+    // Se agregan las celdas correspondientes a Barrio y Obra Social
+    fila.innerHTML = `
+        <td><strong>${p.nombre}</strong></td>
+        <td>${p.dni}</td>
+        <td>${p.fecha}</td>
+        <td>${p.tel}</td>
+        <td>${p.barrio || '-'}</td>
+        <td>${p.obraSocial || '-'}</td>
+        <td>${p.tratamiento}</td>
+        <td><button class="btn-eliminar" onclick="borrarPaciente(${p.id})">Eliminar</button></td>
+    `;
+    lista.appendChild(fila);
+}
+
+function guardarEnLocalStorage(p) {
+    const actual = JSON.parse(localStorage.getItem('pacientesDatos')) || [];
+    actual.push(p);
+    localStorage.setItem('pacientesDatos', JSON.stringify(actual));
+}
+
+function borrarPaciente(id) {
+    if(confirm("¿Eliminar este registro permanente?")) {
+        const fila = document.querySelector(`tr[data-id="${id}"]`);
+        if(fila) fila.remove();
+        
+        let actual = JSON.parse(localStorage.getItem('pacientesDatos')) || [];
+        actual = actual.filter(p => p.id !== id);
+        localStorage.setItem('pacientesDatos', JSON.stringify(actual));
+    }
+}
+
+// Lógica del Buscador
+document.getElementById('buscador').addEventListener('keyup', function() {
+    const filtro = this.value.toLowerCase();
+    const filas = document.querySelectorAll('#listaPacientes tr');
+    filas.forEach(fila => {
+        fila.style.display = fila.innerText.toLowerCase().includes(filtro) ? "" : "none";
+    });
+});

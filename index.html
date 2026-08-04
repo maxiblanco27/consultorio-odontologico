@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nonadoc</title>
+    <link rel="stylesheet" href="stylepage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🦷 Registro de Pacientes</h1>
+    </header>
+    
+    <section class="card">
+        <h2 class="section-title">Datos del Paciente</h2>
+        <form id="formPaciente">
+            <div class="grid-layout">
+                <div class="field">
+                    <label>Nombre y Apellido</label>
+                    <input type="text" id="nombre" required placeholder="Ej: Ana García">
+                </div>
+                <div class="field">
+                    <label>DNI / Cédula</label>
+                    <input type="text" id="dni" required placeholder="Número de documento">
+                </div>
+                <div class="field">
+                    <label>Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" required>
+                </div>
+                <div class="field">
+                    <label>Teléfono</label>
+                    <input type="tel" id="telefono" placeholder="WhatsApp o celular">
+                </div>
+                
+                <div class="field">
+                    <label>Barrio</label>
+                    <input type="text" id="barrio" placeholder="Ej: Centro">
+                </div>
+                <div class="field">
+                    <label>Obra Social</label>
+                    <input type="text" id="obraSocial" placeholder="Nombre de la cobertura">
+                </div>
+               
+                <div class="field full-width">
+                    <label>Detalles del Tratamiento</label>
+                    <textarea id="tratamiento" rows="5" placeholder="Escriba aquí los detalles..."></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn-guardar">Guardar en el Historial</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+            <h2 class="section-title">Historial de Consultas</h2>
+            <div class="search-container">
+                <i class="fas fa-search"></i>
+                <input type="text" id="buscador" placeholder="Buscar por nombre o DNI...">
+            </div>
+        </div>
+
+        <div class="table-container">
+            <table id="tablaPacientes">
+                <thead>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>DNI</th>
+                        <th>Nacimiento</th>
+                        <th>Teléfono</th>
+                        <th>Barrio</th>
+                        <th>Obra Social</th>
+                        <th>Tratamiento</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="listaPacientes"></tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script src="script"></script>
+
+
+
+</body>
+</html>

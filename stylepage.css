@@ -1,0 +1,104 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.full-width { grid-column: 1 / -1; }
+
+.field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.field input, .field textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.btn-guardar {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.search-container {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    padding: 5px 15px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.search-container i { color: #888; margin-right: 10px; }
+.search-container input { border: none; outline: none; width: 100%; padding: 8px; }
+
+/* --- CONTROL DE LA TABLA --- */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Evita que la tabla se estire de más */
+    min-width: 900px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    vertical-align: top;
+    /* RESPETA SALTOS DE LÍNEA Y AJUSTA TEXTO */
+    white-space: pre-line; 
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+th:nth-child(1) { width: 15%; } /* Paciente */
+th:nth-child(6) { width: 25%; } /* Tratamiento con más espacio */
+
+.btn-eliminar {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
