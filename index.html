@@ -13,6 +13,9 @@
     <header>
         <h1>🦷 Registro de Pacientes</h1>
     </header>
+
+    <!-- Contenedor para mostrar mensajes de error o estado al usuario -->
+    <div id="mensajeAlerta" style="display: none; padding: 12px 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; font-size: 14px;"></div>
     
     <section class="card">
         <h2 class="section-title">Datos del Paciente</h2>
@@ -49,7 +52,7 @@
                     <textarea id="tratamiento" rows="5" placeholder="Escriba aquí los detalles..."></textarea>
                 </div>
             </div>
-            <button type="submit" class="btn-guardar">Guardar en el Historial</button>
+            <button type="submit" class="btn-guardar" id="btnGuardar">Guardar en el Historial</button>
         </form>
     </section>
 
@@ -81,11 +84,10 @@
         </div>
     </section>
 </div>
-<!-- Supabase Library-->
+
+<!-- Supabase Library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="script.js"></script>
-
-
 
 </body>
 </html>
