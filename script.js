@@ -1,28 +1,29 @@
 const SUPABASE_URL = 'https://alsurmvechfporxbzaed.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_OTdYnJp9o9QXC6MxhVII7w_0SShMN1n';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Función utilitaria para notificar al usuario en pantalla
-function mostrarAlerta(mensaje, esError = true) {
-    const contenedor = document.getElementById('mensajeAlerta');
-    if (!contenedor) return;
+// 1. CAMBIO AQUÍ: Nombramos la variable 'supabaseClient' en lugar de 'supabase'
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    contenedor.textContent = mensaje;
-    contenedor.style.display = 'block';
+// Utility function to display UI alerts
+function showAlert(message, isError = true) {
+    const alertContainer = document.getElementById('alertMessage');
+    if (!alertContainer) return;
+
+    alertContainer.textContent = message;
+    alertContainer.style.display = 'block';
     
-    if (esError) {
-        contenedor.style.backgroundColor = '#f8d7da';
-        contenedor.style.color = '#721c24';
-        contenedor.style.border = '1px solid #f5c6cb';
+    if (isError) {
+        alertContainer.style.backgroundColor = '#f8d7da';
+        alertContainer.style.color = '#721c24';
+        alertContainer.style.border = '1px solid #f5c6cb';
     } else {
-        contenedor.style.backgroundColor = '#d4edda';
-        contenedor.style.color = '#155724';
-        contenedor.style.border = '1px solid #c3e6cb';
+        alertContainer.style.backgroundColor = '#d4edda';
+        alertContainer.style.color = '#155724';
+        alertContainer.style.border = '1px solid #c3e6cb';
     }
 
-    // Ocultar automáticamente tras 6 segundos
     setTimeout(() => {
-        contenedor.style.display = 'none';
+        alertContainer.style.display = 'none';
     }, 6000);
 }
 
@@ -31,70 +32,72 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function loadPatients() {
-    const listContainer = document.getElementById('listaPacientes');
+    const listContainer = document.getElementById('patientsList');
     listContainer.innerHTML = ''; 
 
     try {
-        const { data: patients, error } = await supabase
+        // 2. CAMBIO AQUÍ: Usamos supabaseClient
+        const { data: patients, error } = await supabaseClient
             .from('patients')
             .select('*')
             .order('id', { ascending: false });
 
         if (error) {
             console.error('Error fetching patients:', error);
-            mostrarAlerta(`No se pudo conectar a la base de datos: ${error.message || 'Verifique su conexión o credenciales.'}`);
+            showAlert(`No se pudo conectar a la base de datos: ${error.message || 'Verifique su conexión o credenciales.'}`);
             return;
         }
 
         patients.forEach(patient => insertRow(patient));
     } catch (err) {
         console.error('Unexpected error:', err);
-        mostrarAlerta('Ocurrió un error inesperado al intentar cargar los pacientes.');
+        showAlert('Ocurrió un error inesperado al intentar cargar los pacientes.');
     }
 }
 
-document.getElementById('formPaciente').addEventListener('submit', async function(e) {
+document.getElementById('patientForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    const btnGuardar = document.getElementById('btnGuardar');
+    const saveBtn = document.getElementById('saveBtn');
 
     const newPatient = {
-        full_name: document.getElementById('nombre').value,
+        full_name: document.getElementById('fullName').value,
         dni: document.getElementById('dni').value,
-        birth_date: document.getElementById('fechaNacimiento').value,
-        phone: document.getElementById('telefono').value,
-        neighborhood: document.getElementById('barrio').value,
-        health_insurance: document.getElementById('obraSocial').value,
-        treatment: document.getElementById('tratamiento').value
+        birth_date: document.getElementById('birthDate').value,
+        phone: document.getElementById('phone').value,
+        neighborhood: document.getElementById('neighborhood').value,
+        health_insurance: document.getElementById('healthInsurance').value,
+        treatment: document.getElementById('treatment').value
     };
 
     try {
-        btnGuardar.disabled = true;
-        btnGuardar.textContent = 'Guardando...';
+        saveBtn.disabled = true;
+        saveBtn.textContent = 'Guardando...';
 
-        const { data, error } = await supabase
+        // 3. CAMBIO AQUÍ: Usamos supabaseClient
+        const { data, error } = await supabaseClient
             .from('patients')
             .insert([newPatient])
             .select();
 
         if (error) {
             console.error('Error inserting patient:', error);
-            mostrarAlerta(`Error al guardar el paciente: ${error.message}`);
+            showAlert(`Error al guardar el paciente: ${error.message}`);
         } else {
             insertRow(data[0]);
             this.reset();
-            mostrarAlerta('Paciente guardado exitosamente.', false);
+            showAlert('Paciente guardado exitosamente.', false);
         }
     } catch (err) {
         console.error('Unexpected error:', err);
-        mostrarAlerta('No se pudo completar la operación por un fallo de conexión.');
+        showAlert('No se pudo completar la operación por un fallo de conexión.');
     } finally {
-        btnGuardar.disabled = false;
-        btnGuardar.textContent = 'Guardar en el Historial';
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Guardar en el Historial';
     }
 });
 
 function insertRow(patient) {
-    const listContainer = document.getElementById('listaPacientes');
+    const listContainer = document.getElementById('patientsList');
     const row = document.createElement('tr');
     row.setAttribute('data-id', patient.id);
     
@@ -114,29 +117,30 @@ function insertRow(patient) {
 async function deletePatient(id) {
     if (confirm("¿Eliminar este registro permanentemente?")) {
         try {
-            const { error } = await supabase
+            // 4. CAMBIO AQUÍ: Usamos supabaseClient
+            const { error } = await supabaseClient
                 .from('patients')
                 .delete()
                 .eq('id', id);
 
             if (error) {
                 console.error('Error deleting patient:', error);
-                mostrarAlerta(`No se pudo eliminar el registro: ${error.message}`);
+                showAlert(`No se pudo eliminar el registro: ${error.message}`);
             } else {
                 const row = document.querySelector(`tr[data-id="${id}"]`);
                 if (row) row.remove();
-                mostrarAlerta('Registro eliminado correctamente.', false);
+                showAlert('Registro eliminado correctamente.', false);
             }
         } catch (err) {
             console.error('Unexpected error:', err);
-            mostrarAlerta('Fallo de conexión al intentar eliminar el registro.');
+            showAlert('Fallo de conexión al intentar eliminar el registro.');
         }
     }
 }
 
-document.getElementById('buscador').addEventListener('keyup', function() {
+document.getElementById('searchInput').addEventListener('keyup', function() {
     const filter = this.value.toLowerCase();
-    const rows = document.querySelectorAll('#listaPacientes tr');
+    const rows = document.querySelectorAll('#patientsList tr');
     rows.forEach(row => {
         row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
     });
