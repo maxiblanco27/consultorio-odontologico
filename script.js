@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 full_name: document.getElementById('fullName').value,
                 dni: document.getElementById('dni').value,
                 birth_date: document.getElementById('birthDate').value,
+                email: document.getElementById('email').value, // NUEVO DATO
                 phone: document.getElementById('phone').value,
                 neighborhood: document.getElementById('neighborhood').value,
                 health_insurance: document.getElementById('healthInsurance').value,
@@ -130,6 +131,7 @@ function insertRow(patient) {
         <td><strong>${patient.full_name}</strong></td>
         <td>${patient.dni}</td>
         <td>${patient.birth_date || '-'}</td>
+        <td>${patient.email || '-'}</td> <!-- NUEVO DATO -->
         <td>${patient.phone || '-'}</td>
         <td>${patient.neighborhood || '-'}</td>
         <td>${patient.health_insurance || '-'}</td>
