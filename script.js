@@ -163,3 +163,30 @@ async function deletePatient(id) {
         }
     }
 }
+
+// ==========================================
+// VERSION UPDATE POLLING SYSTEM
+// ==========================================
+
+const CURRENT_VERSION = 1;
+
+// Fetch version.json and compare with CURRENT_VERSION
+async function checkForUpdates() {
+    try {
+        const response = await fetch(`/version.json?t=${new Date().getTime()}`);
+        const data = await response.json();
+
+        if (data.version > CURRENT_VERSION) {
+            const updateBanner = document.getElementById('updateBanner');
+            if (updateBanner) {
+                updateBanner.style.display = 'flex'; 
+            }
+        }
+    } catch (error) {
+        console.error('Failed to check for system updates:', error);
+    }
+}
+
+// Schedule update checks
+setInterval(checkForUpdates, 300000); // Check every 5 minutes
+setTimeout(checkForUpdates, 5000);    // Initial check after 5 seconds
