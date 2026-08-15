@@ -20,24 +20,22 @@ function showAlert(message, isError = true) {
         alertContainer.style.border = '1px solid #c3e6cb';
     }
 
+    // Hide alert automatically after 6 seconds
     setTimeout(() => {
         alertContainer.style.display = 'none';
     }, 6000);
 }
 
-// Envolvemos TODA la lógica inicial aquí adentro
+// Wrap ALL initial logic inside here
 document.addEventListener('DOMContentLoaded', async () => {
     
-    // 0. Mostrar la versión en pantalla
+    // 0. Display the version on screen
     displayAppVersion();
 
-    // 1. Load initial patient data
-    loadPatients();
-    
-    // 1. Cargar pacientes al iniciar
+    // 1. Load patients on startup (only once)
     loadPatients();
 
-    // 2. Escuchar el envío del formulario
+    // 2. Listen for form submission
     const patientForm = document.getElementById('patientForm');
     if (patientForm) {
         patientForm.addEventListener('submit', async function(e) {
@@ -48,7 +46,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 full_name: document.getElementById('fullName').value,
                 dni: document.getElementById('dni').value,
                 birth_date: document.getElementById('birthDate').value,
-                email: document.getElementById('email').value, // NUEVO DATO
+                email: document.getElementById('email').value,
                 phone: document.getElementById('phone').value,
                 neighborhood: document.getElementById('neighborhood').value,
                 health_insurance: document.getElementById('healthInsurance').value,
@@ -56,6 +54,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             };
 
             try {
+                // Disable button during submission to prevent duplicates
                 saveBtn.disabled = true;
                 saveBtn.textContent = 'Guardando...';
 
@@ -73,18 +72,19 @@ document.addEventListener('DOMContentLoaded', async () => {
                     showAlert('Paciente guardado exitosamente.', false);
                 }
             } catch (err) {
-                console.error('Unexpected error:', err);
+                console.error('Unexpected error during insertion:', err);
                 showAlert('No se pudo completar la operación por un fallo de conexión.');
             } finally {
+                // Restore button state
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Guardar en el Historial';
             }
         });
     } else {
-        console.error("ERROR: No se encontró el formulario 'patientForm' en el HTML.");
+        console.error("DOM Error: 'patientForm' element not found in HTML.");
     }
 
-    // 3. Escuchar el buscador
+    // 3. Listen for search input
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('keyup', function() {
@@ -97,11 +97,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+// Fetch patients from Supabase and render them
 async function loadPatients() {
     const listContainer = document.getElementById('patientsList');
     
     if (!listContainer) {
-        console.error("ERROR: No se encontró la tabla 'patientsList' en el HTML.");
+        console.error("DOM Error: 'patientsList' table not found in HTML.");
         return;
     }
 
@@ -121,11 +122,12 @@ async function loadPatients() {
 
         patients.forEach(patient => insertRow(patient));
     } catch (err) {
-        console.error('Unexpected error:', err);
+        console.error('Unexpected error during data fetch:', err);
         showAlert('Ocurrió un error inesperado al intentar cargar los pacientes.');
     }
 }
 
+// Append a new row to the HTML table
 function insertRow(patient) {
     const listContainer = document.getElementById('patientsList');
     if (!listContainer) return;
@@ -137,7 +139,7 @@ function insertRow(patient) {
         <td><strong>${patient.full_name}</strong></td>
         <td>${patient.dni}</td>
         <td>${patient.birth_date || '-'}</td>
-        <td>${patient.email || '-'}</td> <!-- NUEVO DATO -->
+        <td>${patient.email || '-'}</td>
         <td>${patient.phone || '-'}</td>
         <td>${patient.neighborhood || '-'}</td>
         <td>${patient.health_insurance || '-'}</td>
@@ -147,6 +149,7 @@ function insertRow(patient) {
     listContainer.appendChild(row);
 }
 
+// Delete a patient record from Supabase and remove row from DOM
 async function deletePatient(id) {
     if (confirm("¿Eliminar este registro permanentemente?")) {
         try {
@@ -164,15 +167,19 @@ async function deletePatient(id) {
                 showAlert('Registro eliminado correctamente.', false);
             }
         } catch (err) {
-            console.error('Unexpected error:', err);
+            console.error('Unexpected error during deletion:', err);
             showAlert('Fallo de conexión al intentar eliminar el registro.');
         }
     }
 }
 
+// ==========================================
+// VERSION UPDATE POLLING SYSTEM
+// ==========================================
 const CURRENT_VERSION = 1;
-const VERSION_CODENAME = "CitoSpeed"; // ⚠️ Aquí escribirás tu palabra creativa
+const VERSION_CODENAME = "Speed"; // ⚠️ Only the creative word, "Cito" is already fixed below
 
+// Display the app version in the designated HTML element
 function displayAppVersion() {
     const versionDisplay = document.getElementById('appVersionDisplay');
     if (versionDisplay) {
