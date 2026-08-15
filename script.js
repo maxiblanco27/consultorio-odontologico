@@ -168,7 +168,7 @@ async function deletePatient(id) {
 // VERSION UPDATE POLLING SYSTEM
 // ==========================================
 
-const CURRENT_VERSION = 1;
+const CURRENT_VERSION = 2;
 
 // Fetch version.json and compare with CURRENT_VERSION
 async function checkForUpdates() {
