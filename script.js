@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 phone: document.getElementById('phone').value,
                 neighborhood: document.getElementById('neighborhood').value,
                 health_insurance: document.getElementById('healthInsurance').value,
+                copayment: document.getElementById('copayment').value,
                 treatment: document.getElementById('treatment').value
             };
 
@@ -143,6 +144,7 @@ function insertRow(patient) {
         <td>${patient.phone || '-'}</td>
         <td>${patient.neighborhood || '-'}</td>
         <td>${patient.health_insurance || '-'}</td>
+        <td>${patient.copayment || '-'}</td>
         <td>${patient.treatment || '-'}</td>
         <td><button class="btn-eliminar" onclick="deletePatient(${patient.id})">Eliminar</button></td>
     `;
