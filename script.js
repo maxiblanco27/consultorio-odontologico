@@ -28,6 +28,12 @@ function showAlert(message, isError = true) {
 // Envolvemos TODA la lógica inicial aquí adentro
 document.addEventListener('DOMContentLoaded', async () => {
     
+    // 0. Mostrar la versión en pantalla
+    displayAppVersion();
+
+    // 1. Load initial patient data
+    loadPatients();
+    
     // 1. Cargar pacientes al iniciar
     loadPatients();
 
@@ -164,11 +170,15 @@ async function deletePatient(id) {
     }
 }
 
-// ==========================================
-// VERSION UPDATE POLLING SYSTEM
-// ==========================================
+const CURRENT_VERSION = 1;
+const VERSION_CODENAME = "CitoSpeed"; // ⚠️ Aquí escribirás tu palabra creativa
 
-const CURRENT_VERSION = 2;
+function displayAppVersion() {
+    const versionDisplay = document.getElementById('appVersionDisplay');
+    if (versionDisplay) {
+        versionDisplay.textContent = `Versión ${CURRENT_VERSION} - Cito${VERSION_CODENAME}`;
+    }
+}
 
 // Fetch version.json and compare with CURRENT_VERSION
 async function checkForUpdates() {

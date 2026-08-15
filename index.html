@@ -9,6 +9,11 @@
 </head>
 <body>
 
+<!-- App Version Display (Top Right) -->
+<div style="position: absolute; top: 15px; right: 20px; font-size: 12px; color: #888; font-family: sans-serif;">
+    <span id="appVersionDisplay"></span>
+</div>
+
 <div class="container">
     <header>
         <h1>🦷 Registro de Pacientes</h1>
@@ -18,7 +23,7 @@
         <span>🚀 ¡Hay una nueva versión del sistema disponible!</span>
         <button onclick="window.location.reload(true)" style="padding: 8px 15px; background-color: #856404; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Recargar página</button>
     </div>
-    
+
     <!-- Contenedor para mostrar mensajes de error o estado al usuario -->
     <div id="alertMessage" style="display: none; padding: 12px 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; font-size: 14px;"></div>
     
