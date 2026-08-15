@@ -102,3 +102,18 @@ th:nth-child(6) { width: 25%; } /* Tratamiento con más espacio */
     border-radius: 4px;
     cursor: pointer;
 }
+
+.btn-modificar {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.btn-modificar:hover {
+    background: #0056b3;
+}
