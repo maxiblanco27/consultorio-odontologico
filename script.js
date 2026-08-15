@@ -176,8 +176,8 @@ async function deletePatient(id) {
 // ==========================================
 // VERSION UPDATE POLLING SYSTEM
 // ==========================================
-const CURRENT_VERSION = 3;
-const VERSION_CODENAME = "Lino"; // ⚠️ Only the creative word, "Cito" is already fixed below
+const CURRENT_VERSION = 4;
+const VERSION_CODENAME = "Pendejo"; // ⚠️ Only the creative word, "Cito" is already fixed below
 
 // Display the app version in the designated HTML element
 function displayAppVersion() {
