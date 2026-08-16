@@ -296,8 +296,8 @@ async function deletePatient(id) {
 // ==========================================
 // VERSION UPDATE POLLING SYSTEM
 // ==========================================
-const CURRENT_VERSION = 7; // ⚠️ Update this number to trigger the refresh banner
-const VERSION_CODENAME = "Edit"; // ⚠️ Creative code name
+const CURRENT_VERSION = 8; // ⚠️ Update this number to trigger the refresh banner
+const VERSION_CODENAME = "Guardian"; // ⚠️ Creative code name
 
 // Display the app version in the designated HTML element
 function displayAppVersion() {
