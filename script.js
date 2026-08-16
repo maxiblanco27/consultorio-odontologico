@@ -197,7 +197,7 @@ window.loadPatientIntoForm = function(id) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// Fetch patients from Supabase and render them
+// Fetch active patients from Supabase and render them
 async function loadPatients() {
     const listContainer = document.getElementById('patientsList');
     
@@ -207,12 +207,13 @@ async function loadPatients() {
     }
 
     listContainer.innerHTML = ''; 
-    patientsDataMap.clear(); // Clear cached data on fresh load
+    patientsDataMap.clear(); 
 
     try {
         const { data: patients, error } = await supabaseClient
             .from('patients')
             .select('*')
+            .eq('is_active', true) // ⚠️ FILTRO DE ELIMINACIÓN VIRTUAL
             .order('id', { ascending: false });
 
         if (error) {
@@ -222,7 +223,7 @@ async function loadPatients() {
         }
 
         patients.forEach(patient => {
-            patientsDataMap.set(patient.id, patient); // Store in memory
+            patientsDataMap.set(patient.id, patient); 
             insertRow(patient);
         });
     } catch (err) {
@@ -257,22 +258,26 @@ function insertRow(patient) {
     listContainer.appendChild(row);
 }
 
-// Delete a patient record from Supabase and remove row from DOM
+// Perform a soft-delete (virtual delete) by setting is_active to false
 async function deletePatient(id) {
-    if (confirm("¿Eliminar este registro permanentemente?")) {
+    if (confirm("¿Estás seguro de que deseas eliminar este paciente?")) {
         try {
+            // Virtual delete: Update status instead of removing the row
             const { error } = await supabaseClient
                 .from('patients')
-                .delete()
+                .update({ is_active: false })
                 .eq('id', id);
 
             if (error) {
-                console.error('Error deleting patient:', error);
+                console.error('Error during virtual deletion:', error);
                 showAlert(`No se pudo eliminar el registro: ${error.message}`);
             } else {
+                // Remove row from UI
                 const row = document.querySelector(`tr[data-id="${id}"]`);
                 if (row) row.remove();
-                patientsDataMap.delete(id); // Remove from cache
+                
+                // Remove from cache
+                patientsDataMap.delete(id); 
                 
                 // If user deleted the patient they were currently editing, reset form
                 if (editingPatientId === id) {
@@ -282,7 +287,7 @@ async function deletePatient(id) {
                 showAlert('Registro eliminado correctamente.', false);
             }
         } catch (err) {
-            console.error('Unexpected error during deletion:', err);
+            console.error('Unexpected error during virtual deletion:', err);
             showAlert('Fallo de conexión al intentar eliminar el registro.');
         }
     }
