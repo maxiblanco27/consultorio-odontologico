@@ -292,7 +292,6 @@ function insertRow(patient) {
         <td>${patient.neighborhood || '-'}</td>
         <td>${patient.health_insurance || '-'}</td>
         <td>${patient.copayment || '-'}</td>
-        <td>${patient.treatment || '-'}</td>
         <td>
             <button class="btn-modificar" onclick="loadPatientIntoForm(${patient.id})">Modificar</button>
             <button class="btn-eliminar" onclick="deletePatient(${patient.id})">Eliminar</button>
@@ -339,8 +338,8 @@ async function deletePatient(id) {
 // ==========================================
 // VERSION UPDATE POLLING SYSTEM
 // ==========================================
-const CURRENT_VERSION = 8; // ⚠️ Update this number to trigger the refresh banner
-const VERSION_CODENAME = "Guardian"; // ⚠️ Creative code name
+const CURRENT_VERSION = 9; // ⚠️ Update this number to trigger the refresh banner
+const VERSION_CODENAME = "Ninja"; // ⚠️ Creative code name
 
 // Display the app version in the designated HTML element
 function displayAppVersion() {
