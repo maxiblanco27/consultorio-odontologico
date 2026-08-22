@@ -4,7 +4,7 @@
 
 // ⚠️ REPLACE THIS with your actual production Vercel URL (without https://)
 // Example: 'consultorio-nonadoc.vercel.app'
-const PROD_HOSTNAME = 'tu-url-de-produccion-real.vercel.app';
+const PROD_HOSTNAME = 'https://consultorio-odontologico-omega.vercel.app';
 
 let SUPABASE_URL = '';
 let SUPABASE_KEY = '';
