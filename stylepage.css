@@ -92,7 +92,6 @@ th, td {
 }
 
 th:nth-child(1) { width: 15%; } /* Paciente */
-th:nth-child(6) { width: 25%; } /* Tratamiento con más espacio */
 
 .btn-eliminar {
     background: #dc3545;
