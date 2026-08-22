@@ -1,6 +1,49 @@
-const SUPABASE_URL = 'https://alsurmvechfporxbzaed.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_OTdYnJp9o9QXC6MxhVII7w_0SShMN1n';
+// ==========================================
+// ENVIRONMENT CONFIGURATION
+// ==========================================
+
+// ⚠️ REPLACE THIS with your actual production Vercel URL (without https://)
+// Example: 'consultorio-nonadoc.vercel.app'
+const PROD_HOSTNAME = 'consultorio-odontologico-omega.vercel.app';
+
+let SUPABASE_URL = '';
+let SUPABASE_KEY = '';
+
+// Dynamically assign database credentials based on the current hostname
+if (window.location.hostname === PROD_HOSTNAME) {
+    // 🔴 PRODUCTION DATABASE (Real Patients)
+    SUPABASE_URL = 'https://alsurmvechfporxbzaed.supabase.co';
+    SUPABASE_KEY = 'sb_publishable_OTdYnJp9o9QXC6MxhVII7w_0SShMN1n';
+} else {
+    // 🟢 STAGING / LOCALHOST DATABASE (Test Patients)
+    // ⚠️ PASTE YOUR NEW SUPABASE PROJECT URL AND KEY HERE para tu consultorio-db-test
+    SUPABASE_URL = 'https://vlwcmikacyeggiatdilx.supabase.co';
+    SUPABASE_KEY = 'sb_publishable_dQRb-ULM2i2r6hKNznUk2A_nwe4Mr4F';
+}
+
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// Show Test Environment Banner
+if (window.location.hostname !== PROD_HOSTNAME) {
+    document.addEventListener('DOMContentLoaded', () => {
+        const banner = document.createElement('div');
+        banner.style.backgroundColor = '#f8d7da';
+        banner.style.color = '#721c24';
+        banner.style.padding = '15px';
+        banner.style.textAlign = 'center';
+        banner.style.fontWeight = 'bold';
+        banner.style.borderBottom = '2px solid #f5c6cb';
+        banner.style.zIndex = '9999';
+        banner.style.position = 'relative';
+        banner.innerHTML = `
+            Atención: Ud. está en una versión de prueba. 
+            <a href="https://${PROD_HOSTNAME}" style="background-color: #721c24; color: #fff; padding: 5px 10px; border-radius: 4px; text-decoration: none; margin-left: 10px; font-size: 14px;">
+                Para acceder al sistema real haga click aquí
+            </a>
+        `;
+        document.body.insertBefore(banner, document.body.firstChild);
+    });
+}
 
 // ==========================================
 // GLOBAL STATE VARIABLES
@@ -15,7 +58,7 @@ function showAlert(message, isError = true) {
 
     alertContainer.textContent = message;
     alertContainer.style.display = 'block';
-    
+
     if (isError) {
         alertContainer.style.backgroundColor = '#f8d7da';
         alertContainer.style.color = '#721c24';
@@ -34,7 +77,7 @@ function showAlert(message, isError = true) {
 
 // Wrap ALL initial logic inside here
 document.addEventListener('DOMContentLoaded', async () => {
-    
+
     // 0. Display the version on screen
     displayAppVersion();
 
@@ -44,7 +87,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Listen for form submission
     const patientForm = document.getElementById('patientForm');
     if (patientForm) {
-        patientForm.addEventListener('submit', async function(e) {
+        patientForm.addEventListener('submit', async function (e) {
             e.preventDefault();
             const saveBtn = document.getElementById('saveBtn');
 
@@ -116,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 3. Listen for search input
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
-        searchInput.addEventListener('keyup', function() {
+        searchInput.addEventListener('keyup', function () {
             const filter = this.value.toLowerCase();
             const rows = document.querySelectorAll('#patientsList tr');
             rows.forEach(row => {
@@ -127,12 +170,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 // Resets form inputs, tracking IDs, and UI elements to default "Creation" state
-window.resetFormState = function() {
+window.resetFormState = function () {
     const form = document.getElementById('patientForm');
     if (form) form.reset();
-    
+
     editingPatientId = null; // Clear edit tracking
-    
+
     // Restore Main Save Button
     const saveBtn = document.getElementById('saveBtn');
     if (saveBtn) {
@@ -149,7 +192,7 @@ window.resetFormState = function() {
 };
 
 // Loads a patient's cached data into the form inputs for editing
-window.loadPatientIntoForm = function(id) {
+window.loadPatientIntoForm = function (id) {
     const patient = patientsDataMap.get(id);
     if (!patient) return;
 
@@ -200,14 +243,14 @@ window.loadPatientIntoForm = function(id) {
 // Fetch active patients from Supabase and render them
 async function loadPatients() {
     const listContainer = document.getElementById('patientsList');
-    
+
     if (!listContainer) {
         console.error("DOM Error: 'patientsList' table not found in HTML.");
         return;
     }
 
-    listContainer.innerHTML = ''; 
-    patientsDataMap.clear(); 
+    listContainer.innerHTML = '';
+    patientsDataMap.clear();
 
     try {
         const { data: patients, error } = await supabaseClient
@@ -223,7 +266,7 @@ async function loadPatients() {
         }
 
         patients.forEach(patient => {
-            patientsDataMap.set(patient.id, patient); 
+            patientsDataMap.set(patient.id, patient);
             insertRow(patient);
         });
     } catch (err) {
@@ -239,7 +282,7 @@ function insertRow(patient) {
 
     const row = document.createElement('tr');
     row.setAttribute('data-id', patient.id);
-    
+
     row.innerHTML = `
         <td><strong>${patient.full_name}</strong></td>
         <td>${patient.dni}</td>
@@ -275,15 +318,15 @@ async function deletePatient(id) {
                 // Remove row from UI
                 const row = document.querySelector(`tr[data-id="${id}"]`);
                 if (row) row.remove();
-                
+
                 // Remove from cache
-                patientsDataMap.delete(id); 
-                
+                patientsDataMap.delete(id);
+
                 // If user deleted the patient they were currently editing, reset form
                 if (editingPatientId === id) {
                     resetFormState();
                 }
-                
+
                 showAlert('Registro eliminado correctamente.', false);
             }
         } catch (err) {
@@ -316,7 +359,7 @@ async function checkForUpdates() {
         if (data.version > CURRENT_VERSION) {
             const updateBanner = document.getElementById('updateBanner');
             if (updateBanner) {
-                updateBanner.style.display = 'flex'; 
+                updateBanner.style.display = 'flex';
             }
         }
     } catch (error) {
