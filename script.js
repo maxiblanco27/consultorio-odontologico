@@ -17,7 +17,7 @@ if (window.location.hostname === PROD_HOSTNAME) {
 } else {
     // 🟢 STAGING / LOCALHOST DATABASE (Test Patients)
     // ⚠️ PASTE YOUR NEW SUPABASE PROJECT URL AND KEY HERE para tu consultorio-db-test
-    SUPABASE_URL = 'https://https://vlwcmikacyeggiatdilx.supabase.co';
+    SUPABASE_URL = 'https://vlwcmikacyeggiatdilx.supabase.co';
     SUPABASE_KEY = 'sb_publishable_dQRb-ULM2i2r6hKNznUk2A_nwe4Mr4F';
 }
 
