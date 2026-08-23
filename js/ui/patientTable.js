@@ -101,10 +101,10 @@ export function appendPatientRow(patient) {
                 <i class="fas fa-notes-medical"></i> Historial
             </button>
             <button type="button" class="btn-modificar" data-action="edit" data-id="${patient.id}" title="Ver y modificar datos del paciente">
-                Ver Paciente
+                <i class="fas fa-user-edit"></i> Ver Paciente
             </button>
             <button type="button" class="btn-eliminar" data-action="delete" data-id="${patient.id}" title="Eliminar paciente">
-                Eliminar
+                <i class="fas fa-trash-alt"></i> Eliminar
             </button>
         </td>
     `;
