@@ -109,7 +109,7 @@
             <div class="modal-body">
                 <!-- Formulario Rápido de Nuevo Tratamiento -->
                 <div class="treatment-form-section">
-                    <h3 class="subsection-title"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
+                    <h3 class="subsection-title" id="treatmentFormTitle"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
                     <form id="newTreatmentForm">
                         <div class="treatment-form-grid">
                             <div class="field">
@@ -121,8 +121,8 @@
                                 <input type="number" id="treatmentCost" step="0.01" min="0" placeholder="0.00" required>
                             </div>
                             <div class="field">
-                                <label for="treatmentCopayment">Coseguro</label>
-                                <input type="text" id="treatmentCopayment" placeholder="Monto o porcentaje (opcional)">
+                                <label for="treatmentCopayment">Coseguro ($)</label>
+                                <input type="number" id="treatmentCopayment" step="0.01" min="0" placeholder="0.00">
                             </div>
                             <div class="field full-width">
                                 <label for="treatmentDescription">Detalle de la Consulta / Procedimiento</label>
@@ -130,6 +130,9 @@
                             </div>
                         </div>
                         <div class="form-actions-right">
+                            <button type="button" id="cancelTreatmentEditBtn" class="btn-cancelar-tratamiento" style="display: none;">
+                                <i class="fas fa-times"></i> Cancelar Edición
+                            </button>
                             <button type="submit" id="saveTreatmentBtn" class="btn-guardar-tratamiento">
                                 <i class="fas fa-save"></i> Guardar Tratamiento
                             </button>

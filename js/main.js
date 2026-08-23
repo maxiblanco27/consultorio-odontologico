@@ -5,7 +5,7 @@
  */
 
 import { fetchActivePatients, createPatient, updatePatient, softDeletePatient } from './services/patientService.js';
-import { fetchTreatmentsByPatientId, createTreatment, softDeleteTreatment } from './services/treatmentService.js';
+import { fetchTreatmentsByPatientId, createTreatment, updateTreatment, softDeleteTreatment } from './services/treatmentService.js';
 import { showAlert, showModalAlert, initEnvironmentBanner } from './ui/alertBanner.js';
 import { initPatientTable, renderPatientsTable, appendPatientRow, removePatientRow, getCachedPatient } from './ui/patientTable.js';
 import { initPatientForm, loadPatientIntoForm, resetPatientForm, setFormLoading, getCurrentlyEditingId } from './ui/patientForm.js';
@@ -137,6 +137,25 @@ async function handleAddTreatment(treatmentData) {
 }
 
 /**
+ * Handles updating an existing treatment.
+ * @param {number|string} treatmentId - Treatment ID.
+ * @param {Object} treatmentData - Updated treatment data.
+ * @returns {Promise<boolean>} True if successful.
+ */
+async function handleUpdateTreatment(treatmentId, treatmentData) {
+    const { data, error } = await updateTreatment(treatmentId, treatmentData);
+
+    if (error) {
+        showModalAlert(`Error al actualizar el tratamiento: ${error.message}`);
+        return false;
+    }
+
+    showModalAlert('Tratamiento actualizado exitosamente.', false);
+    await loadPatientTreatments(treatmentData.patient_id);
+    return true;
+}
+
+/**
  * Handles soft-deleting a treatment from a patient's history.
  * @param {number|string} treatmentId - Treatment ID.
  * @param {number|string} patientId - Associated Patient ID.
@@ -182,6 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Initialize clinical history modal component
     initTreatmentModal({
         onAddTreatment: handleAddTreatment,
+        onUpdateTreatment: handleUpdateTreatment,
         onDeleteTreatment: handleDeleteTreatment
     });
 

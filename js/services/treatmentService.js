@@ -84,3 +84,30 @@ export async function softDeleteTreatment(treatmentId) {
         return { success: false, error: err };
     }
 }
+
+/**
+ * Updates an existing treatment record in the database.
+ * @param {number|string} treatmentId - ID of the treatment to update.
+ * @param {Object} treatmentData - Updated treatment fields.
+ * @returns {Promise<{ data: Object|null, error: Error|null }>}
+ */
+export async function updateTreatment(treatmentId, treatmentData) {
+    try {
+        const { data, error } = await supabaseClient
+            .from('treatments')
+            .update(treatmentData)
+            .eq('id', treatmentId)
+            .select();
+
+        if (error) {
+            console.error('Error updating treatment:', error);
+            return { data: null, error };
+        }
+
+        return { data: data ? data[0] : null, error: null };
+    } catch (err) {
+        console.error('Unexpected error in updateTreatment:', err);
+        return { data: null, error: err };
+    }
+}
+

@@ -1,29 +1,34 @@
 /**
  * @file treatmentModal.js
- * @description UI component for managing the clinical history modal, quick-add treatment form, and evolutions list.
+ * @description UI component for managing the clinical history modal, quick-add/edit treatment form, and evolutions list.
  */
 
 import { formatCurrency, formatDate, getTodayDateString } from '../utils/formatters.js';
 import { showModalAlert } from './alertBanner.js';
 
 let currentPatient = null;
+let currentEditingTreatmentId = null;
 let onAddTreatmentCallback = null;
+let onUpdateTreatmentCallback = null;
 let onDeleteTreatmentCallback = null;
 
 /**
  * Initializes the treatment modal event listeners.
  * @param {Object} options - Action callbacks.
- * @param {Function} options.onAddTreatment - Invoked with { patientId, treatmentData }.
- * @param {Function} options.onDeleteTreatment - Invoked with { treatmentId, patientId }.
+ * @param {Function} options.onAddTreatment - Invoked with treatmentData.
+ * @param {Function} options.onUpdateTreatment - Invoked with (treatmentId, treatmentData).
+ * @param {Function} options.onDeleteTreatment - Invoked with (treatmentId, patientId).
  */
-export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
+export function initTreatmentModal({ onAddTreatment, onUpdateTreatment, onDeleteTreatment }) {
     onAddTreatmentCallback = onAddTreatment;
+    onUpdateTreatmentCallback = onUpdateTreatment;
     onDeleteTreatmentCallback = onDeleteTreatment;
 
     const modalOverlay = document.getElementById('historyModal');
     const newTreatmentForm = document.getElementById('newTreatmentForm');
     const closeBtn = document.getElementById('closeModalBtn');
     const closeFooterBtn = document.getElementById('closeModalFooterBtn');
+    const cancelEditBtn = document.getElementById('cancelTreatmentEditBtn');
 
     // Close on backdrop click
     if (modalOverlay) {
@@ -38,6 +43,9 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
     closeBtn?.addEventListener('click', closeTreatmentModal);
     closeFooterBtn?.addEventListener('click', closeTreatmentModal);
 
+    // Cancel edit button
+    cancelEditBtn?.addEventListener('click', resetTreatmentForm);
+
     // Escape key listener
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && currentPatient) {
@@ -45,7 +53,7 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
         }
     });
 
-    // New Treatment Form submission
+    // New/Edit Treatment Form submission
     if (newTreatmentForm) {
         newTreatmentForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -63,7 +71,8 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
 
             const treatmentDate = treatmentDateInput.value.trim();
             const costVal = parseFloat(treatmentCostInput.value);
-            const copayment = treatmentCopaymentInput ? treatmentCopaymentInput.value.trim() : '';
+            const rawCopayment = treatmentCopaymentInput ? treatmentCopaymentInput.value.trim() : '';
+            const copaymentVal = rawCopayment !== '' ? parseFloat(rawCopayment) : 0;
             const description = treatmentDescInput.value.trim();
 
             // Field Validations
@@ -77,6 +86,11 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
                 return;
             }
 
+            if (isNaN(copaymentVal) || copaymentVal < 0) {
+                showModalAlert('El coseguro debe ser un valor numérico mayor o igual a 0.');
+                return;
+            }
+
             if (!description) {
                 showModalAlert('Debe ingresar una descripción para el tratamiento.');
                 return;
@@ -86,33 +100,121 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
                 patient_id: currentPatient.id,
                 treatment_date: treatmentDate,
                 cost: costVal,
-                copayment: copayment,
+                copayment: copaymentVal,
                 description: description
             };
+
+            const isEdit = Boolean(currentEditingTreatmentId);
 
             try {
                 if (saveBtn) {
                     saveBtn.disabled = true;
-                    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+                    saveBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${isEdit ? 'Actualizando...' : 'Guardando...'}`;
                 }
 
-                if (onAddTreatmentCallback) {
+                if (isEdit && onUpdateTreatmentCallback) {
+                    const success = await onUpdateTreatmentCallback(currentEditingTreatmentId, treatmentData);
+                    if (success) {
+                        resetTreatmentForm();
+                    }
+                } else if (onAddTreatmentCallback) {
                     const success = await onAddTreatmentCallback(treatmentData);
                     if (success) {
-                        treatmentDescInput.value = '';
-                        treatmentCostInput.value = '';
-                        treatmentCostInput.placeholder = '0.00';
-                        if (treatmentCopaymentInput) treatmentCopaymentInput.value = '';
-                        treatmentDateInput.value = getTodayDateString();
+                        resetTreatmentForm();
                     }
                 }
             } finally {
                 if (saveBtn) {
                     saveBtn.disabled = false;
-                    saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Tratamiento';
+                    if (currentEditingTreatmentId) {
+                        saveBtn.innerHTML = '<i class="fas fa-edit"></i> Actualizar Tratamiento';
+                        saveBtn.classList.add('btn-actualizar-mode');
+                    } else {
+                        saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Tratamiento';
+                        saveBtn.classList.remove('btn-actualizar-mode');
+                    }
                 }
             }
         });
+    }
+}
+
+/**
+ * Loads a treatment record into the form inputs for editing.
+ * @param {Object} treatment - Treatment data object.
+ */
+export function loadTreatmentIntoForm(treatment) {
+    if (!treatment) return;
+
+    currentEditingTreatmentId = treatment.id;
+
+    const treatmentDateInput = document.getElementById('treatmentDate');
+    const treatmentCostInput = document.getElementById('treatmentCost');
+    const treatmentCopaymentInput = document.getElementById('treatmentCopayment');
+    const treatmentDescInput = document.getElementById('treatmentDescription');
+    const formTitle = document.getElementById('treatmentFormTitle');
+    const saveBtn = document.getElementById('saveTreatmentBtn');
+    const cancelEditBtn = document.getElementById('cancelTreatmentEditBtn');
+
+    if (treatmentDateInput) treatmentDateInput.value = treatment.treatment_date || getTodayDateString();
+    if (treatmentCostInput) treatmentCostInput.value = treatment.cost !== undefined && treatment.cost !== null ? treatment.cost : '';
+    if (treatmentCopaymentInput) treatmentCopaymentInput.value = treatment.copayment !== undefined && treatment.copayment !== null ? treatment.copayment : '';
+    if (treatmentDescInput) treatmentDescInput.value = treatment.description || '';
+
+    if (formTitle) {
+        formTitle.innerHTML = '<i class="fas fa-pencil-alt"></i> Editar Tratamiento';
+    }
+
+    if (saveBtn) {
+        saveBtn.innerHTML = '<i class="fas fa-edit"></i> Actualizar Tratamiento';
+        saveBtn.classList.add('btn-actualizar-mode');
+    }
+
+    if (cancelEditBtn) {
+        cancelEditBtn.style.display = 'inline-flex';
+    }
+
+    // Scroll to the form
+    document.querySelector('.treatment-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/**
+ * Resets the treatment form back to Create Mode.
+ */
+export function resetTreatmentForm() {
+    currentEditingTreatmentId = null;
+
+    const treatmentDateInput = document.getElementById('treatmentDate');
+    const treatmentCostInput = document.getElementById('treatmentCost');
+    const treatmentCopaymentInput = document.getElementById('treatmentCopayment');
+    const treatmentDescInput = document.getElementById('treatmentDescription');
+    const formTitle = document.getElementById('treatmentFormTitle');
+    const saveBtn = document.getElementById('saveTreatmentBtn');
+    const cancelEditBtn = document.getElementById('cancelTreatmentEditBtn');
+
+    if (treatmentDateInput) treatmentDateInput.value = getTodayDateString();
+    if (treatmentCostInput) {
+        treatmentCostInput.value = '';
+        treatmentCostInput.placeholder = '0.00';
+    }
+    if (treatmentCopaymentInput) {
+        treatmentCopaymentInput.value = '';
+        treatmentCopaymentInput.placeholder = '0.00';
+    }
+    if (treatmentDescInput) treatmentDescInput.value = '';
+
+    if (formTitle) {
+        formTitle.innerHTML = '<i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento';
+    }
+
+    if (saveBtn) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Tratamiento';
+        saveBtn.classList.remove('btn-actualizar-mode');
+    }
+
+    if (cancelEditBtn) {
+        cancelEditBtn.style.display = 'none';
     }
 }
 
@@ -122,13 +224,10 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
  */
 export function openTreatmentModal(patient) {
     currentPatient = patient;
+    resetTreatmentForm();
 
     const modalPatientName = document.getElementById('modalPatientName');
     const modalPatientInfo = document.getElementById('modalPatientInfo');
-    const treatmentDateInput = document.getElementById('treatmentDate');
-    const treatmentCostInput = document.getElementById('treatmentCost');
-    const treatmentCopaymentInput = document.getElementById('treatmentCopayment');
-    const treatmentDescInput = document.getElementById('treatmentDescription');
     const modalAlert = document.getElementById('modalAlertMessage');
     const modalOverlay = document.getElementById('historyModal');
 
@@ -140,15 +239,6 @@ export function openTreatmentModal(patient) {
         modalPatientInfo.textContent = `DNI: ${patient.dni || '-'} | Obra Social: ${patient.health_insurance || 'Particular'}`;
     }
 
-    // Default date to today
-    if (treatmentDateInput) {
-        treatmentDateInput.value = getTodayDateString();
-    }
-
-    // Reset inputs
-    if (treatmentCostInput) treatmentCostInput.value = '';
-    if (treatmentCopaymentInput) treatmentCopaymentInput.value = '';
-    if (treatmentDescInput) treatmentDescInput.value = '';
     if (modalAlert) modalAlert.style.display = 'none';
 
     // Show modal
@@ -162,6 +252,7 @@ export function openTreatmentModal(patient) {
  */
 export function closeTreatmentModal() {
     currentPatient = null;
+    resetTreatmentForm();
     const modalOverlay = document.getElementById('historyModal');
     if (modalOverlay) {
         modalOverlay.style.display = 'none';
@@ -230,13 +321,20 @@ export function renderTreatments(treatments) {
             <td><strong>${formatDate(treatment.treatment_date)}</strong></td>
             <td>${escapeHtml(treatment.description || '')}</td>
             <td><strong>${formatCurrency(treatment.cost)}</strong></td>
-            <td>${escapeHtml(treatment.copayment || '-')}</td>
-            <td class="text-center">
+            <td><strong>${formatCurrency(treatment.copayment || 0)}</strong></td>
+            <td class="text-center action-buttons-cell">
+                <button type="button" class="btn-editar-tratamiento" data-id="${treatment.id}" title="Editar este tratamiento">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
                 <button type="button" class="btn-eliminar-tratamiento" data-id="${treatment.id}" title="Eliminar este tratamiento">
                     <i class="fas fa-trash-alt"></i>
                 </button>
             </td>
         `;
+
+        row.querySelector('.btn-editar-tratamiento')?.addEventListener('click', () => {
+            loadTreatmentIntoForm(treatment);
+        });
 
         row.querySelector('.btn-eliminar-tratamiento')?.addEventListener('click', () => {
             if (onDeleteTreatmentCallback && currentPatient) {
@@ -268,3 +366,4 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
 }
+
