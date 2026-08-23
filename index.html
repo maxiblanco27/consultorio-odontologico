@@ -10,7 +10,7 @@
 <body>
 
 <!-- App Version Display (Top Right) -->
-<div style="position: absolute; top: 15px; right: 20px; font-size: 12px; color: #888; font-family: sans-serif; z-index: 1000;">
+<div class="app-version-badge">
     <span id="appVersionDisplay"></span>
 </div>
 
@@ -19,53 +19,49 @@
         <h1>🦷 Registro de Pacientes</h1>
     </header>
 
-    <div id="updateBanner" style="display: none; background-color: #fff3cd; color: #856404; padding: 15px; align-items: center; justify-content: space-between; font-weight: bold; margin-bottom: 20px; border-radius: 6px; border: 1px solid #ffeeba;">
+    <!-- Banner de nueva versión del sistema -->
+    <div id="updateBanner" class="update-banner">
         <span>🚀 ¡Hay una nueva versión del sistema disponible!</span>
-        <button onclick="window.location.reload(true)" style="padding: 8px 15px; background-color: #856404; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Recargar página</button>
+        <button type="button" class="btn-update-reload" onclick="window.location.reload(true)">Recargar página</button>
     </div>
 
-    <!-- Contenedor para mostrar mensajes de error o estado al usuario -->
-    <div id="alertMessage" style="display: none; padding: 12px 15px; margin-bottom: 20px; border-radius: 6px; font-weight: bold; font-size: 14px;"></div>
+    <!-- Contenedor para mostrar mensajes de alerta al usuario -->
+    <div id="alertMessage" class="alert-banner"></div>
     
     <section class="card">
         <h2 class="section-title">Datos del Paciente</h2>
         <form id="patientForm">
             <div class="grid-layout">
                 <div class="field">
-                    <label>Nombre y Apellido</label>
+                    <label for="fullName">Nombre y Apellido</label>
                     <input type="text" id="fullName" required placeholder="Ej: Ana García">
                 </div>
                 <div class="field">
-                    <label>DNI / Cédula</label>
+                    <label for="dni">DNI / Cédula</label>
                     <input type="text" id="dni" required placeholder="Número de documento">
                 </div>
                 <div class="field">
-                    <label>Fecha de Nacimiento</label>
+                    <label for="birthDate">Fecha de Nacimiento</label>
                     <input type="date" id="birthDate" required>
                 </div>
                 <div class="field">
-                    <label>Correo Electrónico</label>
+                    <label for="email">Correo Electrónico</label>
                     <input type="email" id="email" placeholder="ejemplo@correo.com">
                 </div>
                 <div class="field">
-                    <label>Teléfono</label>
+                    <label for="phone">Teléfono</label>
                     <input type="tel" id="phone" placeholder="WhatsApp o celular">
                 </div>
-                
                 <div class="field">
-                    <label>Barrio</label>
+                    <label for="neighborhood">Barrio</label>
                     <input type="text" id="neighborhood" placeholder="Ej: Centro">
                 </div>
                 <div class="field">
-                    <label>Obra Social</label>
+                    <label for="healthInsurance">Obra Social</label>
                     <input type="text" id="healthInsurance" placeholder="Nombre de la cobertura">
                 </div>
-                <div class="field">
-                    <label>Coseguro</label>
-                    <input type="text" id="copayment" placeholder="Monto o porcentaje">
-                </div>               
                 <div class="field full-width">
-                    <label>Detalles del Tratamiento</label>
+                    <label for="treatment">Detalles del Tratamiento</label>
                     <textarea id="treatment" rows="5" placeholder="Escriba aquí los detalles..."></textarea>
                 </div>
             </div>
@@ -74,7 +70,7 @@
     </section>
 
     <section class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 15px;">
+        <div class="table-header-toolbar">
             <h2 class="section-title">Historial de Consultas</h2>
             <div class="search-container">
                 <i class="fas fa-search"></i>
@@ -89,11 +85,8 @@
                         <th>Paciente</th>
                         <th>DNI</th>
                         <th>Nacimiento</th>
-                        <th>Email</th>
                         <th>Teléfono</th>
-                        <th>Barrio</th>
                         <th>Obra Social</th>
-                        <th>Coseguro</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
@@ -101,12 +94,100 @@
             </table>
         </div>
     </section>
+
+    <!-- Modal de Historial Clínico Multi-Tratamiento -->
+    <div id="historyModal" class="modal-overlay" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h2 id="modalPatientName" class="modal-title">Historial Clínico</h2>
+                    <p id="modalPatientInfo" class="modal-subtitle">DNI: - | Obra Social: -</p>
+                </div>
+                <button type="button" class="modal-close-btn" id="closeModalBtn" aria-label="Cerrar">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Formulario Rápido de Nuevo Tratamiento -->
+                <div class="treatment-form-section">
+                    <h3 class="subsection-title"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
+                    <form id="newTreatmentForm">
+                        <div class="treatment-form-grid">
+                            <div class="field">
+                                <label for="treatmentDate">Fecha</label>
+                                <input type="date" id="treatmentDate" required>
+                            </div>
+                            <div class="field">
+                                <label for="treatmentCost">Costo ($)</label>
+                                <input type="number" id="treatmentCost" step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                            <div class="field">
+                                <label for="treatmentCopayment">Coseguro ($)</label>
+                                <input type="number" id="treatmentCopayment" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                            <div class="field full-width">
+                                <label for="treatmentDescription">Detalle de la Consulta / Procedimiento</label>
+                                <textarea id="treatmentDescription" rows="3" placeholder="Describa el tratamiento realizado, evolución, materiales..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="submit" id="saveTreatmentBtn" class="btn-guardar-tratamiento">
+                                <i class="fas fa-save"></i> Guardar Tratamiento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <hr class="modal-divider">
+
+                <!-- Listado Cronológico de Tratamientos -->
+                <div class="treatment-history-section">
+                    <div class="history-header">
+                        <h3 class="subsection-title"><i class="fas fa-notes-medical"></i> Evoluciones y Tratamientos Previos</h3>
+                        <div id="totalCostBadge" class="total-cost-badge">
+                            Total Acumulado: <strong>$0.00</strong>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje / Alerta en Modal -->
+                    <div id="modalAlertMessage" class="alert-banner"></div>
+
+                    <div id="treatmentsLoading" class="loading-state" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando tratamientos...
+                    </div>
+
+                    <div id="treatmentsEmpty" class="empty-state" style="display: none;">
+                        <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
+                        <p>No se registran tratamientos previos para este paciente.</p>
+                    </div>
+
+                    <div class="treatment-table-container">
+                        <table id="treatmentsTable" class="treatments-table" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 18%;">Fecha</th>
+                                    <th style="width: 44%;">Descripción</th>
+                                    <th style="width: 15%;">Costo</th>
+                                    <th style="width: 13%;">Coseguro</th>
+                                    <th style="width: 10%; text-align: center;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="treatmentsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cerrar-modal" id="closeModalFooterBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Librería de Supabase -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Tu archivo JavaScript -->
-<script src="script.js"></script>
+<!-- Aplicación Modular (ES Modules) -->
+<script type="module" src="js/main.js"></script>
 
 </body>
 </html>
