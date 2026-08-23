@@ -3,8 +3,8 @@
  * @description Manages application version display and update polling.
  */
 
-export const CURRENT_VERSION = 14;
-export const VERSION_CODENAME = 'Nova';
+export const CURRENT_VERSION = 15;
+export const VERSION_CODENAME = 'Apex';
 
 /**
  * Initializes the version display and update polling schedule.

@@ -63,7 +63,8 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
 
             const treatmentDate = treatmentDateInput.value.trim();
             const costVal = parseFloat(treatmentCostInput.value);
-            const copayment = treatmentCopaymentInput ? treatmentCopaymentInput.value.trim() : '';
+            const rawCopayment = treatmentCopaymentInput ? treatmentCopaymentInput.value.trim() : '';
+            const copaymentVal = rawCopayment !== '' ? parseFloat(rawCopayment) : 0;
             const description = treatmentDescInput.value.trim();
 
             // Field Validations
@@ -77,6 +78,11 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
                 return;
             }
 
+            if (isNaN(copaymentVal) || copaymentVal < 0) {
+                showModalAlert('El coseguro debe ser un valor numérico mayor o igual a 0.');
+                return;
+            }
+
             if (!description) {
                 showModalAlert('Debe ingresar una descripción para el tratamiento.');
                 return;
@@ -86,7 +92,7 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
                 patient_id: currentPatient.id,
                 treatment_date: treatmentDate,
                 cost: costVal,
-                copayment: copayment,
+                copayment: copaymentVal,
                 description: description
             };
 
@@ -102,7 +108,10 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
                         treatmentDescInput.value = '';
                         treatmentCostInput.value = '';
                         treatmentCostInput.placeholder = '0.00';
-                        if (treatmentCopaymentInput) treatmentCopaymentInput.value = '';
+                        if (treatmentCopaymentInput) {
+                            treatmentCopaymentInput.value = '';
+                            treatmentCopaymentInput.placeholder = '0.00';
+                        }
                         treatmentDateInput.value = getTodayDateString();
                     }
                 }
@@ -147,7 +156,10 @@ export function openTreatmentModal(patient) {
 
     // Reset inputs
     if (treatmentCostInput) treatmentCostInput.value = '';
-    if (treatmentCopaymentInput) treatmentCopaymentInput.value = '';
+    if (treatmentCopaymentInput) {
+        treatmentCopaymentInput.value = '';
+        treatmentCopaymentInput.placeholder = '0.00';
+    }
     if (treatmentDescInput) treatmentDescInput.value = '';
     if (modalAlert) modalAlert.style.display = 'none';
 
@@ -230,7 +242,7 @@ export function renderTreatments(treatments) {
             <td><strong>${formatDate(treatment.treatment_date)}</strong></td>
             <td>${escapeHtml(treatment.description || '')}</td>
             <td><strong>${formatCurrency(treatment.cost)}</strong></td>
-            <td>${escapeHtml(treatment.copayment || '-')}</td>
+            <td><strong>${formatCurrency(treatment.copayment || 0)}</strong></td>
             <td class="text-center">
                 <button type="button" class="btn-eliminar-tratamiento" data-id="${treatment.id}" title="Eliminar este tratamiento">
                     <i class="fas fa-trash-alt"></i>
