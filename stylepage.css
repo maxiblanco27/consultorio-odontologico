@@ -564,6 +564,23 @@ tbody tr:hover {
     background-color: #f8fafc;
 }
 
+.btn-editar-tratamiento {
+    background: #e0f2fe;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-right: 4px;
+    transition: all 0.2s;
+}
+
+.btn-editar-tratamiento:hover {
+    background: #0284c7;
+    color: white;
+}
+
 .btn-eliminar-tratamiento {
     background: #fee2e2;
     color: #dc2626;
@@ -578,6 +595,34 @@ tbody tr:hover {
 .btn-eliminar-tratamiento:hover {
     background: #dc2626;
     color: white;
+}
+
+.btn-cancelar-tratamiento {
+    background-color: #64748b;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-right: 10px;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-cancelar-tratamiento:hover {
+    background-color: #475569;
+}
+
+.btn-guardar-tratamiento.btn-actualizar-mode {
+    background-color: #007bff;
+}
+
+.btn-guardar-tratamiento.btn-actualizar-mode:hover {
+    background-color: #0056b3;
 }
 
 .modal-footer {

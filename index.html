@@ -109,7 +109,7 @@
             <div class="modal-body">
                 <!-- Formulario Rápido de Nuevo Tratamiento -->
                 <div class="treatment-form-section">
-                    <h3 class="subsection-title"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
+                    <h3 class="subsection-title" id="treatmentFormTitle"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
                     <form id="newTreatmentForm">
                         <div class="treatment-form-grid">
                             <div class="field">
@@ -130,6 +130,9 @@
                             </div>
                         </div>
                         <div class="form-actions-right">
+                            <button type="button" id="cancelTreatmentEditBtn" class="btn-cancelar-tratamiento" style="display: none;">
+                                <i class="fas fa-times"></i> Cancelar Edición
+                            </button>
                             <button type="submit" id="saveTreatmentBtn" class="btn-guardar-tratamiento">
                                 <i class="fas fa-save"></i> Guardar Tratamiento
                             </button>
