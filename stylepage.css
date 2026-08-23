@@ -287,7 +287,7 @@ th {
 }
 
 th:nth-child(1) { width: 16%; }
-th:last-child, td:last-child { min-width: 240px; }
+th:last-child, td:last-child { min-width: 260px; }
 
 tbody tr:hover {
     background-color: #f8fafc;

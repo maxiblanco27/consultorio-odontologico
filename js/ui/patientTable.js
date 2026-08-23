@@ -93,17 +93,15 @@ export function appendPatientRow(patient) {
         <td><strong>${escapeHtml(patient.full_name || '')}</strong></td>
         <td>${escapeHtml(patient.dni || '')}</td>
         <td>${formatDate(patient.birth_date)}</td>
-        <td>${escapeHtml(patient.email || '-')}</td>
         <td>${escapeHtml(patient.phone || '-')}</td>
-        <td>${escapeHtml(patient.neighborhood || '-')}</td>
         <td>${escapeHtml(patient.health_insurance || '-')}</td>
         <td>${escapeHtml(patient.copayment || '-')}</td>
         <td class="action-buttons-cell">
             <button type="button" class="btn-historial" data-action="history" data-id="${patient.id}" title="Ver Historial Clínico">
                 <i class="fas fa-notes-medical"></i> Historial
             </button>
-            <button type="button" class="btn-modificar" data-action="edit" data-id="${patient.id}" title="Modificar datos">
-                Modificar
+            <button type="button" class="btn-modificar" data-action="edit" data-id="${patient.id}" title="Ver y modificar datos del paciente">
+                Ver Paciente
             </button>
             <button type="button" class="btn-eliminar" data-action="delete" data-id="${patient.id}" title="Eliminar paciente">
                 Eliminar
