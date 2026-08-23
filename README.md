@@ -33,6 +33,11 @@ Avoid monolithic script files. Split functionality into focused modules inside a
 * `version/versionManager.js`: Handles version polling and update banners.
 * `main.js`: Main entry point responsible only for importing modules and initializing listeners on `DOMContentLoaded`.
 
+Versioning & Creative Codename Convention
+* **Mandatory Codename Rotation:** On every single update or new version increment, `VERSION_CODENAME` MUST be updated with a new creative word (e.g., `Dark`, `Motorized`, `OmniDoctor`, `Titanium`, `Nova`).
+* **Format:** The codename represents the suffix added after the fixed "Cito" prefix (yielding names like `CitoDark`, `CitoMotorized`, `CitoOmniDoctor`).
+* **Synchronization:** Both `CURRENT_VERSION` in the JavaScript config and `"version"` in `version.json` must be incremented simultaneously upon release.
+
 ### 3. HTML & CSS Structure
 * **Semantic HTML:** Keep `index.html` clean and declarative. Use `<template>` tags or modular container injection for modals and dynamic views rather than hardcoding complex invisible layouts directly in the body.
 * **Modular CSS:** Separate stylesheets by domain if they grow (e.g., `base.css`, `components/table.css`, `components/modal.css`, `layout.css`). Avoid inline styling (`style="..."`); use dedicated utility or component CSS classes.

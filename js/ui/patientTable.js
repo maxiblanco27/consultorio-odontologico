@@ -100,8 +100,8 @@ export function appendPatientRow(patient) {
             <button type="button" class="btn-historial" data-action="history" data-id="${patient.id}" title="Ver Historial Clínico">
                 <i class="fas fa-notes-medical"></i> Historial
             </button>
-            <button type="button" class="btn-modificar" data-action="edit" data-id="${patient.id}" title="Modificar datos">
-                Modificar
+            <button type="button" class="btn-modificar" data-action="edit" data-id="${patient.id}" title="Ver y modificar datos del paciente">
+                Ver Paciente
             </button>
             <button type="button" class="btn-eliminar" data-action="delete" data-id="${patient.id}" title="Eliminar paciente">
                 Eliminar
