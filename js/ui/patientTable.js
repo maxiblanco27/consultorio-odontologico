@@ -93,9 +93,7 @@ export function appendPatientRow(patient) {
         <td><strong>${escapeHtml(patient.full_name || '')}</strong></td>
         <td>${escapeHtml(patient.dni || '')}</td>
         <td>${formatDate(patient.birth_date)}</td>
-        <td>${escapeHtml(patient.email || '-')}</td>
         <td>${escapeHtml(patient.phone || '-')}</td>
-        <td>${escapeHtml(patient.neighborhood || '-')}</td>
         <td>${escapeHtml(patient.health_insurance || '-')}</td>
         <td>${escapeHtml(patient.copayment || '-')}</td>
         <td class="action-buttons-cell">

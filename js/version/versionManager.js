@@ -3,7 +3,7 @@
  * @description Manages application version display and update polling.
  */
 
-export const CURRENT_VERSION = 10;
+export const CURRENT_VERSION = 11;
 export const VERSION_CODENAME = 'OmniDoctor';
 
 /**
