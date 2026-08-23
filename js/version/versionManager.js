@@ -3,8 +3,8 @@
  * @description Manages application version display and update polling.
  */
 
-export const CURRENT_VERSION = 13;
-export const VERSION_CODENAME = 'Titanium';
+export const CURRENT_VERSION = 14;
+export const VERSION_CODENAME = 'Nova';
 
 /**
  * Initializes the version display and update polling schedule.

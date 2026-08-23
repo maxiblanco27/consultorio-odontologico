@@ -95,7 +95,6 @@ export function appendPatientRow(patient) {
         <td>${formatDate(patient.birth_date)}</td>
         <td>${escapeHtml(patient.phone || '-')}</td>
         <td>${escapeHtml(patient.health_insurance || '-')}</td>
-        <td>${escapeHtml(patient.copayment || '-')}</td>
         <td class="action-buttons-cell">
             <button type="button" class="btn-historial" data-action="history" data-id="${patient.id}" title="Ver Historial Clínico">
                 <i class="fas fa-notes-medical"></i> Historial
