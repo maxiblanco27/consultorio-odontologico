@@ -57,11 +57,13 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
 
             const treatmentDateInput = document.getElementById('treatmentDate');
             const treatmentCostInput = document.getElementById('treatmentCost');
+            const treatmentCopaymentInput = document.getElementById('treatmentCopayment');
             const treatmentDescInput = document.getElementById('treatmentDescription');
             const saveBtn = document.getElementById('saveTreatmentBtn');
 
             const treatmentDate = treatmentDateInput.value.trim();
             const costVal = parseFloat(treatmentCostInput.value);
+            const copayment = treatmentCopaymentInput ? treatmentCopaymentInput.value.trim() : '';
             const description = treatmentDescInput.value.trim();
 
             // Field Validations
@@ -84,6 +86,7 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
                 patient_id: currentPatient.id,
                 treatment_date: treatmentDate,
                 cost: costVal,
+                copayment: copayment,
                 description: description
             };
 
@@ -99,6 +102,7 @@ export function initTreatmentModal({ onAddTreatment, onDeleteTreatment }) {
                         treatmentDescInput.value = '';
                         treatmentCostInput.value = '';
                         treatmentCostInput.placeholder = '0.00';
+                        if (treatmentCopaymentInput) treatmentCopaymentInput.value = '';
                         treatmentDateInput.value = getTodayDateString();
                     }
                 }
@@ -123,6 +127,7 @@ export function openTreatmentModal(patient) {
     const modalPatientInfo = document.getElementById('modalPatientInfo');
     const treatmentDateInput = document.getElementById('treatmentDate');
     const treatmentCostInput = document.getElementById('treatmentCost');
+    const treatmentCopaymentInput = document.getElementById('treatmentCopayment');
     const treatmentDescInput = document.getElementById('treatmentDescription');
     const modalAlert = document.getElementById('modalAlertMessage');
     const modalOverlay = document.getElementById('historyModal');
@@ -132,7 +137,7 @@ export function openTreatmentModal(patient) {
     }
 
     if (modalPatientInfo) {
-        modalPatientInfo.textContent = `DNI: ${patient.dni || '-'} | Obra Social: ${patient.health_insurance || 'Particular'} | Coseguro: ${patient.copayment || '-'}`;
+        modalPatientInfo.textContent = `DNI: ${patient.dni || '-'} | Obra Social: ${patient.health_insurance || 'Particular'}`;
     }
 
     // Default date to today
@@ -142,6 +147,7 @@ export function openTreatmentModal(patient) {
 
     // Reset inputs
     if (treatmentCostInput) treatmentCostInput.value = '';
+    if (treatmentCopaymentInput) treatmentCopaymentInput.value = '';
     if (treatmentDescInput) treatmentDescInput.value = '';
     if (modalAlert) modalAlert.style.display = 'none';
 
@@ -224,6 +230,7 @@ export function renderTreatments(treatments) {
             <td><strong>${formatDate(treatment.treatment_date)}</strong></td>
             <td>${escapeHtml(treatment.description || '')}</td>
             <td><strong>${formatCurrency(treatment.cost)}</strong></td>
+            <td>${escapeHtml(treatment.copayment || '-')}</td>
             <td class="text-center">
                 <button type="button" class="btn-eliminar-tratamiento" data-id="${treatment.id}" title="Eliminar este tratamiento">
                     <i class="fas fa-trash-alt"></i>

@@ -31,7 +31,6 @@ export function initPatientForm({ onSubmit }) {
             phone: document.getElementById('phone').value.trim(),
             neighborhood: document.getElementById('neighborhood').value.trim(),
             health_insurance: document.getElementById('healthInsurance').value.trim(),
-            copayment: document.getElementById('copayment').value.trim(),
             treatment: document.getElementById('treatment').value.trim()
         };
 
@@ -59,7 +58,6 @@ export function loadPatientIntoForm(patient) {
     document.getElementById('phone').value = patient.phone || '';
     document.getElementById('neighborhood').value = patient.neighborhood || '';
     document.getElementById('healthInsurance').value = patient.health_insurance || '';
-    document.getElementById('copayment').value = patient.copayment || '';
     document.getElementById('treatment').value = patient.treatment || '';
 
     currentEditingId = patient.id;

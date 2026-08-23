@@ -60,10 +60,6 @@
                     <label for="healthInsurance">Obra Social</label>
                     <input type="text" id="healthInsurance" placeholder="Nombre de la cobertura">
                 </div>
-                <div class="field">
-                    <label for="copayment">Coseguro</label>
-                    <input type="text" id="copayment" placeholder="Monto o porcentaje">
-                </div>               
                 <div class="field full-width">
                     <label for="treatment">Detalles del Tratamiento</label>
                     <textarea id="treatment" rows="5" placeholder="Escriba aquí los detalles..."></textarea>
@@ -91,7 +87,6 @@
                         <th>Nacimiento</th>
                         <th>Teléfono</th>
                         <th>Obra Social</th>
-                        <th>Coseguro</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
@@ -124,6 +119,10 @@
                             <div class="field">
                                 <label for="treatmentCost">Costo ($)</label>
                                 <input type="number" id="treatmentCost" step="0.01" min="0" placeholder="0.00" required>
+                            </div>
+                            <div class="field">
+                                <label for="treatmentCopayment">Coseguro</label>
+                                <input type="text" id="treatmentCopayment" placeholder="Monto o porcentaje (opcional)">
                             </div>
                             <div class="field full-width">
                                 <label for="treatmentDescription">Detalle de la Consulta / Procedimiento</label>
@@ -165,10 +164,11 @@
                         <table id="treatmentsTable" class="treatments-table" style="display: none;">
                             <thead>
                                 <tr>
-                                    <th style="width: 20%;">Fecha</th>
-                                    <th style="width: 50%;">Descripción</th>
-                                    <th style="width: 18%;">Costo</th>
-                                    <th style="width: 12%; text-align: center;">Acción</th>
+                                    <th style="width: 18%;">Fecha</th>
+                                    <th style="width: 44%;">Descripción</th>
+                                    <th style="width: 15%;">Costo</th>
+                                    <th style="width: 13%;">Coseguro</th>
+                                    <th style="width: 10%; text-align: center;">Acción</th>
                                 </tr>
                             </thead>
                             <tbody id="treatmentsList"></tbody>
