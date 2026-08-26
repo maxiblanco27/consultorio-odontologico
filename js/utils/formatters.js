@@ -23,13 +23,15 @@ export function formatCurrency(amount) {
  */
 export function formatDate(dateStr) {
     if (!dateStr) return '-';
+    const str = String(dateStr).trim();
+    if (!str || str === '-') return '-';
     // Extract date component if full timestamp is provided
-    const dateOnly = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+    const dateOnly = str.includes('T') ? str.split('T')[0] : str;
     const parts = dateOnly.split('-');
-    if (parts.length === 3) {
+    if (parts.length === 3 && parts[0].length === 4) {
         return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
-    return dateStr;
+    return str;
 }
 
 /**

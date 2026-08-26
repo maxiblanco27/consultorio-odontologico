@@ -64,9 +64,26 @@ export function renderPatientsTable(patients) {
     listContainer.innerHTML = '';
     patientsCache.clear();
 
+    if (!patients || patients.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.className = 'empty-patients-row';
+        emptyRow.innerHTML = `
+            <td colspan="6" style="text-align: center; padding: 32px 16px; color: #64748b;">
+                <i class="fas fa-folder-open" style="font-size: 2rem; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
+                <span>No se registran pacientes en este entorno.</span>
+            </td>
+        `;
+        listContainer.appendChild(emptyRow);
+        return;
+    }
+
     patients.forEach(patient => {
-        patientsCache.set(patient.id, patient);
-        appendPatientRow(patient);
+        try {
+            patientsCache.set(patient.id, patient);
+            appendPatientRow(patient);
+        } catch (rowErr) {
+            console.error('Error rendering patient row for patient ID:', patient?.id, rowErr);
+        }
     });
 }
 
@@ -76,7 +93,13 @@ export function renderPatientsTable(patients) {
  */
 export function appendPatientRow(patient) {
     const listContainer = document.getElementById('patientsList');
-    if (!listContainer) return;
+    if (!listContainer || !patient) return;
+
+    // Remove empty placeholder row if present
+    const emptyRow = listContainer.querySelector('.empty-patients-row');
+    if (emptyRow) {
+        emptyRow.remove();
+    }
 
     patientsCache.set(patient.id, patient);
 
@@ -134,6 +157,10 @@ export function removePatientRow(patientId) {
     const row = document.querySelector(`tr[data-patient-id="${patientId}"]`);
     if (row) {
         row.remove();
+    }
+
+    if (patientsCache.size === 0) {
+        renderPatientsTable([]);
     }
 }
 

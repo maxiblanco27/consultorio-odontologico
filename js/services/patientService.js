@@ -11,11 +11,23 @@ import { supabaseClient } from '../config/supabaseClient.js';
  */
 export async function fetchActivePatients() {
     try {
-        const { data, error } = await supabaseClient
+        // Fetch active or legacy (is_active IS NULL) patients
+        let { data, error } = await supabaseClient
             .from('patients')
             .select('*')
-            .eq('is_active', true)
+            .or('is_active.eq.true,is_active.is.null')
             .order('id', { ascending: false });
+
+        // Fallback: if 'is_active' column does not exist in staging/test database schema
+        if (error && (error.code === 'PGRST204' || error.message?.includes('is_active'))) {
+            console.warn('is_active column not found in patients table. Falling back to select * without filter.');
+            const fallbackResult = await supabaseClient
+                .from('patients')
+                .select('*')
+                .order('id', { ascending: false });
+            data = fallbackResult.data;
+            error = fallbackResult.error;
+        }
 
         if (error) {
             console.error('Error fetching patients:', error);
@@ -36,10 +48,26 @@ export async function fetchActivePatients() {
  */
 export async function createPatient(patientData) {
     try {
-        const { data, error } = await supabaseClient
+        const payload = {
+            ...patientData,
+            is_active: true
+        };
+
+        let { data, error } = await supabaseClient
             .from('patients')
-            .insert([patientData])
+            .insert([payload])
             .select();
+
+        // Fallback: if is_active column does not exist in DB schema
+        if (error && (error.code === 'PGRST204' || error.message?.includes('is_active'))) {
+            console.warn('is_active column not found. Inserting without is_active.');
+            const fallbackResult = await supabaseClient
+                .from('patients')
+                .insert([patientData])
+                .select();
+            data = fallbackResult.data;
+            error = fallbackResult.error;
+        }
 
         if (error) {
             console.error('Error creating patient:', error);
