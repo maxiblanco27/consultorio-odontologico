@@ -11,6 +11,7 @@ let currentEditingTreatmentId = null;
 let onAddTreatmentCallback = null;
 let onUpdateTreatmentCallback = null;
 let onDeleteTreatmentCallback = null;
+let onOpenPaymentsCallback = null;
 
 /**
  * Initializes the treatment modal event listeners.
@@ -18,11 +19,13 @@ let onDeleteTreatmentCallback = null;
  * @param {Function} options.onAddTreatment - Invoked with treatmentData.
  * @param {Function} options.onUpdateTreatment - Invoked with (treatmentId, treatmentData).
  * @param {Function} options.onDeleteTreatment - Invoked with (treatmentId, patientId).
+ * @param {Function} options.onOpenPayments - Invoked with (treatment, patient).
  */
-export function initTreatmentModal({ onAddTreatment, onUpdateTreatment, onDeleteTreatment }) {
+export function initTreatmentModal({ onAddTreatment, onUpdateTreatment, onDeleteTreatment, onOpenPayments }) {
     onAddTreatmentCallback = onAddTreatment;
     onUpdateTreatmentCallback = onUpdateTreatment;
     onDeleteTreatmentCallback = onDeleteTreatment;
+    onOpenPaymentsCallback = onOpenPayments;
 
     const modalOverlay = document.getElementById('historyModal');
     const newTreatmentForm = document.getElementById('newTreatmentForm');
@@ -48,7 +51,7 @@ export function initTreatmentModal({ onAddTreatment, onUpdateTreatment, onDelete
 
     // Escape key listener
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && currentPatient) {
+        if (e.key === 'Escape' && currentPatient && document.getElementById('historyModal')?.style.display === 'flex') {
             closeTreatmentModal();
         }
     });
@@ -309,20 +312,39 @@ export function renderTreatments(treatments) {
     }
 
     let totalCost = 0;
+    let totalPaid = 0;
+    let totalBalance = 0;
 
     treatments.forEach(treatment => {
         const cost = parseFloat(treatment.cost) || 0;
+        const balance = treatment.balance !== undefined && treatment.balance !== null
+            ? parseFloat(treatment.balance)
+            : cost;
+        const paid = Math.max(0, cost - balance);
+
         totalCost += cost;
+        totalPaid += paid;
+        totalBalance += balance;
 
         const row = document.createElement('tr');
         row.setAttribute('data-treatment-id', treatment.id);
+
+        const isFullyPaid = balance <= 0;
+        const balanceBadgeHtml = isFullyPaid
+            ? `<span class="badge-status badge-paid"><i class="fas fa-check-circle"></i> Saldado</span>`
+            : `<span class="badge-status badge-pending"><i class="fas fa-clock"></i> ${formatCurrency(balance)}</span>`;
 
         row.innerHTML = `
             <td><strong>${formatDate(treatment.treatment_date)}</strong></td>
             <td>${escapeHtml(treatment.description || '')}</td>
             <td><strong>${formatCurrency(treatment.cost)}</strong></td>
-            <td><strong>${formatCurrency(treatment.copayment || 0)}</strong></td>
+            <td>${formatCurrency(treatment.copayment || 0)}</td>
+            <td><strong class="text-success">${formatCurrency(paid)}</strong></td>
+            <td>${balanceBadgeHtml}</td>
             <td class="text-center action-buttons-cell">
+                <button type="button" class="btn-pagos-tratamiento" data-id="${treatment.id}" title="Registrar / Ver aportes económicos">
+                    <i class="fas fa-hand-holding-usd"></i> Aportes
+                </button>
                 <button type="button" class="btn-editar-tratamiento" data-id="${treatment.id}" title="Editar este tratamiento">
                     <i class="fas fa-pencil-alt"></i>
                 </button>
@@ -331,6 +353,12 @@ export function renderTreatments(treatments) {
                 </button>
             </td>
         `;
+
+        row.querySelector('.btn-pagos-tratamiento')?.addEventListener('click', () => {
+            if (onOpenPaymentsCallback && currentPatient) {
+                onOpenPaymentsCallback(treatment, currentPatient);
+            }
+        });
 
         row.querySelector('.btn-editar-tratamiento')?.addEventListener('click', () => {
             loadTreatmentIntoForm(treatment);
@@ -346,7 +374,15 @@ export function renderTreatments(treatments) {
     });
 
     if (totalBadgeElem) {
-        totalBadgeElem.innerHTML = `Total Acumulado: <strong>${formatCurrency(totalCost)}</strong>`;
+        totalBadgeElem.innerHTML = `
+            <div class="patient-financial-summary">
+                <span>Costo: <strong>${formatCurrency(totalCost)}</strong></span>
+                <span class="summary-sep">|</span>
+                <span class="text-success">Abonado: <strong>${formatCurrency(totalPaid)}</strong></span>
+                <span class="summary-sep">|</span>
+                <span class="${totalBalance > 0 ? 'text-danger' : 'text-success'}">Saldo: <strong>${formatCurrency(totalBalance)}</strong></span>
+            </div>
+        `;
     }
 
     if (emptyElem) emptyElem.style.display = 'none';

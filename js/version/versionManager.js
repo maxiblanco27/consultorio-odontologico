@@ -3,8 +3,8 @@
  * @description Manages application version display and update polling.
  */
 
-export const CURRENT_VERSION = 16;
-export const VERSION_CODENAME = 'Zenith';
+export const CURRENT_VERSION = 17;
+export const VERSION_CODENAME = 'Balanced';
 
 /**
  * Initializes the version display and update polling schedule.

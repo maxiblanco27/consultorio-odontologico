@@ -6,11 +6,16 @@
 
 import { fetchActivePatients, createPatient, updatePatient, softDeletePatient } from './services/patientService.js';
 import { fetchTreatmentsByPatientId, createTreatment, updateTreatment, softDeleteTreatment } from './services/treatmentService.js';
-import { showAlert, showModalAlert, initEnvironmentBanner } from './ui/alertBanner.js';
+import { fetchPaymentsByTreatmentId, createPayment, softDeletePayment } from './services/paymentService.js';
+import { showAlert, showModalAlert, showPaymentModalAlert, initEnvironmentBanner } from './ui/alertBanner.js';
 import { initPatientTable, renderPatientsTable, appendPatientRow, removePatientRow, getCachedPatient } from './ui/patientTable.js';
 import { initPatientForm, loadPatientIntoForm, resetPatientForm, setFormLoading, getCurrentlyEditingId } from './ui/patientForm.js';
 import { initTreatmentModal, openTreatmentModal, closeTreatmentModal, renderTreatments, setTreatmentsLoading, getCurrentModalPatient } from './ui/treatmentModal.js';
+import { initPaymentModal, openPaymentModal, closePaymentModal, updatePaymentModalState, setPaymentsLoading } from './ui/paymentModal.js';
+import { formatCurrency } from './utils/formatters.js';
 import { initVersionManager } from './version/versionManager.js';
+
+let activePaymentTreatment = null;
 
 /**
  * Loads all active patients from the database and updates the table.
@@ -103,6 +108,7 @@ async function handlePatientDelete(patientId) {
     // If deleting patient whose history modal is open, close modal
     const modalPatient = getCurrentModalPatient();
     if (modalPatient && modalPatient.id === patientId) {
+        closePaymentModal();
         closeTreatmentModal();
     }
 
@@ -116,6 +122,101 @@ async function handlePatientDelete(patientId) {
 async function handleOpenHistory(patient) {
     openTreatmentModal(patient);
     await loadPatientTreatments(patient.id);
+}
+
+/**
+ * Handles opening the payments modal for a specific treatment.
+ * @param {Object} treatment - Treatment data object.
+ * @param {Object} patient - Patient data object.
+ */
+async function handleOpenPayments(treatment, patient) {
+    activePaymentTreatment = treatment;
+    openPaymentModal(treatment, patient, []);
+    setPaymentsLoading(true);
+
+    const { data: payments, error } = await fetchPaymentsByTreatmentId(treatment.id);
+    setPaymentsLoading(false);
+
+    if (error) {
+        showPaymentModalAlert(`Error al consultar los aportes: ${error.message}`);
+        return;
+    }
+
+    updatePaymentModalState(activePaymentTreatment, payments || []);
+}
+
+/**
+ * Handles recording a new economic contribution/payment.
+ * @param {Object} paymentData - Payment data object.
+ * @returns {Promise<boolean>} True if successful.
+ */
+async function handleAddPayment(paymentData) {
+    const { data, balanceInfo, error } = await createPayment(paymentData);
+
+    if (error) {
+        showPaymentModalAlert(`Error al registrar el aporte: ${error.message}`);
+        return false;
+    }
+
+    showPaymentModalAlert('Aporte económico registrado exitosamente.', false);
+
+    // Refresh payments list
+    const { data: payments } = await fetchPaymentsByTreatmentId(paymentData.treatment_id);
+
+    if (activePaymentTreatment && balanceInfo) {
+        activePaymentTreatment = {
+            ...activePaymentTreatment,
+            balance: balanceInfo.balance
+        };
+        updatePaymentModalState(activePaymentTreatment, payments || []);
+    }
+
+    // Synchronize parent treatments list in real time
+    const modalPatient = getCurrentModalPatient();
+    if (modalPatient) {
+        await loadPatientTreatments(modalPatient.id);
+    }
+
+    return true;
+}
+
+/**
+ * Handles soft-deleting an economic contribution/payment.
+ * @param {number|string} paymentId - Payment ID.
+ * @param {number|string} treatmentId - Associated Treatment ID.
+ * @param {number|string} amount - Amount of payment being annulled.
+ */
+async function handleDeletePayment(paymentId, treatmentId, amount) {
+    const formattedAmount = formatCurrency(amount);
+    if (!confirm(`¿Estás seguro de que deseas anular este aporte de ${formattedAmount}?`)) {
+        return;
+    }
+
+    const { success, balanceInfo, error } = await softDeletePayment(paymentId, treatmentId);
+
+    if (!success || error) {
+        showPaymentModalAlert(`No se pudo anular el aporte: ${error ? error.message : 'Error desconocido'}`);
+        return;
+    }
+
+    showPaymentModalAlert('Aporte económico anulado exitosamente.', false);
+
+    // Refresh payments list
+    const { data: payments } = await fetchPaymentsByTreatmentId(treatmentId);
+
+    if (activePaymentTreatment && balanceInfo) {
+        activePaymentTreatment = {
+            ...activePaymentTreatment,
+            balance: balanceInfo.balance
+        };
+        updatePaymentModalState(activePaymentTreatment, payments || []);
+    }
+
+    // Synchronize parent treatments list in real time
+    const modalPatient = getCurrentModalPatient();
+    if (modalPatient) {
+        await loadPatientTreatments(modalPatient.id);
+    }
 }
 
 /**
@@ -172,6 +273,10 @@ async function handleDeleteTreatment(treatmentId, patientId) {
         return;
     }
 
+    if (activePaymentTreatment && activePaymentTreatment.id === treatmentId) {
+        closePaymentModal();
+    }
+
     showModalAlert('Tratamiento eliminado correctamente.', false);
     await loadPatientTreatments(patientId);
 }
@@ -202,9 +307,16 @@ document.addEventListener('DOMContentLoaded', () => {
     initTreatmentModal({
         onAddTreatment: handleAddTreatment,
         onUpdateTreatment: handleUpdateTreatment,
-        onDeleteTreatment: handleDeleteTreatment
+        onDeleteTreatment: handleDeleteTreatment,
+        onOpenPayments: handleOpenPayments
     });
 
-    // 6. Initial data fetch
+    // 6. Initialize treatment payments modal component
+    initPaymentModal({
+        onAddPayment: handleAddPayment,
+        onDeletePayment: handleDeletePayment
+    });
+
+    // 7. Initial data fetch
     loadPatients();
 });

@@ -7,6 +7,7 @@ import { PROD_HOSTNAME } from '../config/supabaseClient.js';
 
 let mainAlertTimer = null;
 let modalAlertTimer = null;
+let paymentModalAlertTimer = null;
 
 /**
  * Displays a feedback alert in the main application container.
@@ -53,6 +54,30 @@ export function showModalAlert(message, isError = true, duration = 5000) {
     modalAlertTimer = setTimeout(() => {
         alertContainer.style.display = 'none';
         modalAlertTimer = null;
+    }, duration);
+}
+
+/**
+ * Displays a feedback alert inside the payments modal.
+ * @param {string} message - Notification text to display.
+ * @param {boolean} [isError=true] - Whether the notification represents an error.
+ * @param {number} [duration=5000] - Duration in milliseconds before automatic dismissal.
+ */
+export function showPaymentModalAlert(message, isError = true, duration = 5000) {
+    const alertContainer = document.getElementById('paymentModalAlertMessage');
+    if (!alertContainer) return;
+
+    if (paymentModalAlertTimer) {
+        clearTimeout(paymentModalAlertTimer);
+    }
+
+    alertContainer.textContent = message;
+    alertContainer.className = `alert-banner ${isError ? 'alert-error' : 'alert-success'}`;
+    alertContainer.style.display = 'block';
+
+    paymentModalAlertTimer = setTimeout(() => {
+        alertContainer.style.display = 'none';
+        paymentModalAlertTimer = null;
     }, duration);
 }
 
