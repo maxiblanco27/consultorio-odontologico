@@ -21,14 +21,18 @@ let activePaymentTreatment = null;
  * Loads all active patients from the database and updates the table.
  */
 async function loadPatients() {
-    const { data: patients, error } = await fetchActivePatients();
+    const [patientsRes, countsRes] = await Promise.all([
+        fetchActivePatients(),
+        fetchTreatmentCounts()
+    ]);
 
-    if (error) {
-        showAlert(`No se pudo conectar a la base de datos: ${error.message || 'Verifique su conexión.'}`);
+    if (patientsRes.error) {
+        showAlert(`No se pudo conectar a la base de datos: ${patientsRes.error.message || 'Verifique su conexión.'}`);
         return;
     }
 
-    renderPatientsTable(patients || []);
+    const countsMap = countsRes.data || new Map();
+    renderPatientsTable(patientsRes.data || [], countsMap);
 }
 
 /**
@@ -45,7 +49,9 @@ async function loadPatientTreatments(patientId) {
         return;
     }
 
-    renderTreatments(treatments || []);
+    const treatmentsList = treatments || [];
+    renderTreatments(treatmentsList);
+    updatePatientTreatmentCount(patientId, treatmentsList.length);
 }
 
 /**
@@ -71,7 +77,7 @@ async function handlePatientSubmit({ isEdit, patientId, formData }) {
                 showAlert(`Error al guardar el paciente: ${error.message}`);
             } else {
                 if (data) {
-                    appendPatientRow(data);
+                    appendPatientRow(data, 0);
                 }
                 resetPatientForm();
                 showAlert('Paciente guardado exitosamente.', false);
