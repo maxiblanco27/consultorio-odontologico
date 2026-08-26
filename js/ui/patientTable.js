@@ -7,6 +7,7 @@ import { formatDate } from '../utils/formatters.js';
 
 // Internal cache for loaded patients to enable quick lookups
 const patientsCache = new Map();
+let treatmentCountsMap = new Map();
 
 // Action handler callbacks
 let onEditPatientCallback = null;
@@ -56,13 +57,15 @@ function setupSearchFilter() {
 /**
  * Renders an array of patients into the table body.
  * @param {Array<Object>} patients - List of patient objects from database.
+ * @param {Map<number, number>} [countsMap] - Map of patient_id -> count of active treatments.
  */
-export function renderPatientsTable(patients) {
+export function renderPatientsTable(patients, countsMap = new Map()) {
     const listContainer = document.getElementById('patientsList');
     if (!listContainer) return;
 
     listContainer.innerHTML = '';
     patientsCache.clear();
+    treatmentCountsMap = countsMap || new Map();
 
     if (!patients || patients.length === 0) {
         const emptyRow = document.createElement('tr');
@@ -90,8 +93,9 @@ export function renderPatientsTable(patients) {
 /**
  * Appends a single patient row to the table.
  * @param {Object} patient - Patient data object.
+ * @param {number} [treatmentCount] - Count of treatments for this patient.
  */
-export function appendPatientRow(patient) {
+export function appendPatientRow(patient, treatmentCount) {
     const listContainer = document.getElementById('patientsList');
     if (!listContainer || !patient) return;
 
@@ -101,7 +105,10 @@ export function appendPatientRow(patient) {
         emptyRow.remove();
     }
 
+    const count = treatmentCount !== undefined ? treatmentCount : (treatmentCountsMap.get(Number(patient.id)) || 0);
+
     patientsCache.set(patient.id, patient);
+    treatmentCountsMap.set(Number(patient.id), count);
 
     // Remove existing row if updating
     const existingRow = document.querySelector(`tr[data-patient-id="${patient.id}"]`);
@@ -112,6 +119,8 @@ export function appendPatientRow(patient) {
     const row = document.createElement('tr');
     row.setAttribute('data-patient-id', patient.id);
 
+    const evolucionesText = count === 1 ? '1 evolución' : `${count} evoluciones`;
+
     row.innerHTML = `
         <td><strong>${escapeHtml(patient.full_name || '')}</strong></td>
         <td>${escapeHtml(patient.dni || '')}</td>
@@ -119,8 +128,9 @@ export function appendPatientRow(patient) {
         <td>${escapeHtml(patient.phone || '-')}</td>
         <td>${escapeHtml(patient.health_insurance || '-')}</td>
         <td class="action-buttons-cell">
-            <button type="button" class="btn-historial" data-action="history" data-id="${patient.id}" title="Ver Historial Clínico">
+            <button type="button" class="btn-historial" data-action="history" data-id="${patient.id}" title="Ver Historial Clínico (${evolucionesText})">
                 <i class="fas fa-notes-medical"></i> Historial
+                <span class="treatment-count-badge ${count > 0 ? 'has-treatments' : ''}" id="treatment-count-${patient.id}">${count}</span>
             </button>
             <button type="button" class="btn-modificar" data-action="edit" data-id="${patient.id}" title="Ver y modificar datos del paciente">
                 <i class="fas fa-user-edit"></i> Ver Paciente
@@ -145,6 +155,41 @@ export function appendPatientRow(patient) {
     });
 
     listContainer.appendChild(row);
+}
+
+/**
+ * Updates the treatment count badge for a specific patient.
+ * @param {number|string} patientId - Patient ID.
+ * @param {number} newCount - New count of treatments.
+ */
+export function updatePatientTreatmentCount(patientId, newCount) {
+    const numId = Number(patientId);
+    treatmentCountsMap.set(numId, newCount);
+
+    const badge = document.getElementById(`treatment-count-${patientId}`);
+    if (badge) {
+        badge.textContent = newCount;
+        if (newCount > 0) {
+            badge.classList.add('has-treatments');
+        } else {
+            badge.classList.remove('has-treatments');
+        }
+    }
+
+    const btn = document.querySelector(`button.btn-historial[data-id="${patientId}"]`);
+    if (btn) {
+        const evolucionesText = newCount === 1 ? '1 evolución' : `${newCount} evoluciones`;
+        btn.title = `Ver Historial Clínico (${evolucionesText})`;
+    }
+}
+
+/**
+ * Gets the cached treatment count for a specific patient.
+ * @param {number|string} patientId - Patient ID.
+ * @returns {number} Count of treatments.
+ */
+export function getPatientTreatmentCount(patientId) {
+    return treatmentCountsMap.get(Number(patientId)) || 0;
 }
 
 /**
