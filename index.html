@@ -167,11 +167,13 @@
                         <table id="treatmentsTable" class="treatments-table" style="display: none;">
                             <thead>
                                 <tr>
-                                    <th style="width: 18%;">Fecha</th>
-                                    <th style="width: 44%;">Descripción</th>
-                                    <th style="width: 15%;">Costo</th>
-                                    <th style="width: 13%;">Coseguro</th>
-                                    <th style="width: 10%; text-align: center;">Acción</th>
+                                    <th style="width: 13%;">Fecha</th>
+                                    <th style="width: 25%;">Descripción</th>
+                                    <th style="width: 12%;">Costo</th>
+                                    <th style="width: 11%;">Coseguro</th>
+                                    <th style="width: 12%;">Abonado</th>
+                                    <th style="width: 14%;">Saldo</th>
+                                    <th style="width: 13%; text-align: center;">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="treatmentsList"></tbody>
@@ -182,6 +184,105 @@
 
             <div class="modal-footer">
                 <button type="button" class="btn-cerrar-modal" id="closeModalFooterBtn">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Gestión de Aportes Económicos del Tratamiento -->
+    <div id="paymentModal" class="modal-overlay modal-overlay-sub" style="display: none;">
+        <div class="modal-card modal-card-payment">
+            <div class="modal-header">
+                <div>
+                    <h2 id="paymentModalTitle" class="modal-title"><i class="fas fa-hand-holding-dollar"></i> Gestión de Aportes Económicos</h2>
+                    <p id="paymentModalSubtitle" class="modal-subtitle">Tratamiento: - | Paciente: -</p>
+                </div>
+                <button type="button" class="modal-close-btn" id="closePaymentModalBtn" aria-label="Cerrar">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Mensaje / Alerta en Modal de Pagos -->
+                <div id="paymentModalAlertMessage" class="alert-banner"></div>
+
+                <!-- Resumen Financiero del Tratamiento -->
+                <div class="financial-summary-grid">
+                    <div class="stat-card stat-cost">
+                        <span class="stat-label"><i class="fas fa-tag"></i> Costo Total</span>
+                        <strong class="stat-value" id="paymentSummaryCost">$ 0.00</strong>
+                    </div>
+                    <div class="stat-card stat-paid">
+                        <span class="stat-label"><i class="fas fa-check-circle"></i> Total Abonado</span>
+                        <strong class="stat-value text-success" id="paymentSummaryPaid">$ 0.00</strong>
+                    </div>
+                    <div class="stat-card stat-balance is-pending" id="paymentSummaryBalanceCard">
+                        <span class="stat-label"><i class="fas fa-clock"></i> Saldo Pendiente</span>
+                        <strong class="stat-value" id="paymentSummaryBalance">$ 0.00</strong>
+                    </div>
+                </div>
+
+                <!-- Formulario Rápido de Nuevo Aporte -->
+                <div class="payment-form-section">
+                    <h3 class="subsection-title"><i class="fas fa-plus-circle"></i> Registrar Nuevo Aporte</h3>
+                    <form id="newPaymentForm">
+                        <div class="payment-form-grid">
+                            <div class="field">
+                                <label for="paymentDate">Fecha del Aporte</label>
+                                <input type="date" id="paymentDate" required>
+                            </div>
+                            <div class="field">
+                                <label for="paymentAmount">Importe a Abonar ($)</label>
+                                <div class="amount-input-group">
+                                    <input type="number" id="paymentAmount" step="0.01" min="0.01" placeholder="0.00" required>
+                                    <button type="button" id="btnFillTotalBalance" class="btn-quick-fill" title="Autocompletar saldo total restante">
+                                        Total
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="field full-width">
+                                <label for="paymentNotes">Observaciones / Medio de Pago (Opcional)</label>
+                                <input type="text" id="paymentNotes" placeholder="Ej: Efectivo, Transferencia Mercado Pago, Tarjeta...">
+                            </div>
+                        </div>
+                        <div class="form-actions-right">
+                            <button type="submit" id="savePaymentBtn" class="btn-guardar-aporte">
+                                <i class="fas fa-hand-holding-usd"></i> Registrar Aporte
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <hr class="modal-divider">
+
+                <!-- Historial de Aportes del Tratamiento -->
+                <div class="payments-history-section">
+                    <h3 class="subsection-title"><i class="fas fa-receipt"></i> Historial de Aportes Realizados</h3>
+
+                    <div id="paymentsLoading" class="loading-state" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando aportes...
+                    </div>
+
+                    <div id="paymentsEmpty" class="empty-state" style="display: none;">
+                        <i class="fas fa-file-invoice-dollar" style="font-size: 2rem; margin-bottom: 8px; display: block; opacity: 0.5;"></i>
+                        <p>No se registran aportes económicos para este tratamiento.</p>
+                    </div>
+
+                    <div class="payment-table-container">
+                        <table id="paymentsTable" class="payments-table" style="display: none;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 22%;">Fecha</th>
+                                    <th style="width: 25%;">Importe</th>
+                                    <th style="width: 38%;">Observaciones / Medio</th>
+                                    <th style="width: 15%; text-align: center;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn-cerrar-modal" id="closePaymentModalFooterBtn">Volver al Historial</button>
             </div>
         </div>
     </div>
