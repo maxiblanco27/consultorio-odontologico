@@ -5,11 +5,7 @@
  */
 
 import { fetchActivePatients, createPatient, updatePatient, softDeletePatient } from './services/patientService.js';
-<<<<<<< Updated upstream
-import { fetchTreatmentsByPatientId, createTreatment, softDeleteTreatment } from './services/treatmentService.js';
-=======
 import { fetchTreatmentsByPatientId, fetchTreatmentCounts, createTreatment, updateTreatment, softDeleteTreatment } from './services/treatmentService.js';
->>>>>>> Stashed changes
 import { showAlert, showModalAlert, initEnvironmentBanner } from './ui/alertBanner.js';
 import { initPatientTable, renderPatientsTable, appendPatientRow, removePatientRow, updatePatientTreatmentCount, getCachedPatient } from './ui/patientTable.js';
 import { initPatientForm, loadPatientIntoForm, resetPatientForm, setFormLoading, getCurrentlyEditingId } from './ui/patientForm.js';

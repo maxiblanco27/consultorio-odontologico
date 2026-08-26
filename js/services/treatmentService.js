@@ -84,8 +84,6 @@ export async function softDeleteTreatment(treatmentId) {
         return { success: false, error: err };
     }
 }
-<<<<<<< Updated upstream
-=======
 
 /**
  * Updates an existing treatment record in the database.
@@ -144,4 +142,3 @@ export async function fetchTreatmentCounts() {
 }
 
 
->>>>>>> Stashed changes

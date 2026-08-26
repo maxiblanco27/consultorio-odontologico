@@ -3,13 +3,8 @@
  * @description Manages application version display and update polling.
  */
 
-<<<<<<< Updated upstream
-export const CURRENT_VERSION = 15;
-export const VERSION_CODENAME = 'Apex';
-=======
 export const CURRENT_VERSION = 17;
 export const VERSION_CODENAME = 'Pulse';
->>>>>>> Stashed changes
 
 /**
  * Initializes the version display and update polling schedule.
