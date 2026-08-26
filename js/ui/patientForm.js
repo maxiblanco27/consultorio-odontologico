@@ -98,7 +98,7 @@ export function resetPatientForm() {
     const saveBtn = document.getElementById('saveBtn');
     if (saveBtn) {
         saveBtn.disabled = false;
-        saveBtn.textContent = 'Guardar en el Historial';
+        saveBtn.textContent = 'Guardar';
         saveBtn.className = 'btn-guardar';
     }
 
@@ -120,7 +120,7 @@ export function setFormLoading(isLoading) {
     if (isLoading) {
         saveBtn.textContent = currentEditingId ? 'Actualizando...' : 'Guardando...';
     } else {
-        saveBtn.textContent = currentEditingId ? 'Actualizar Paciente' : 'Guardar en el Historial';
+        saveBtn.textContent = currentEditingId ? 'Actualizar Paciente' : 'Guardar';
     }
 }
 
