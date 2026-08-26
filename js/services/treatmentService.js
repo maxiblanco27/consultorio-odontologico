@@ -111,3 +111,34 @@ export async function updateTreatment(treatmentId, treatmentData) {
     }
 }
 
+/**
+ * Fetches a Map of active treatment counts grouped by patient_id.
+ * @returns {Promise<{ data: Map<number, number>|null, error: Error|null }>}
+ */
+export async function fetchTreatmentCounts() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('treatments')
+            .select('patient_id')
+            .eq('is_active', true);
+
+        if (error) {
+            console.error('Error fetching treatment counts:', error);
+            return { data: null, error };
+        }
+
+        const countMap = new Map();
+        (data || []).forEach(item => {
+            const pid = Number(item.patient_id);
+            const current = countMap.get(pid) || 0;
+            countMap.set(pid, current + 1);
+        });
+
+        return { data: countMap, error: null };
+    } catch (err) {
+        console.error('Unexpected error in fetchTreatmentCounts:', err);
+        return { data: null, error: err };
+    }
+}
+
+
