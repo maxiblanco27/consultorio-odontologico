@@ -5,25 +5,32 @@
  */
 
 import { fetchActivePatients, createPatient, updatePatient, softDeletePatient } from './services/patientService.js';
+<<<<<<< Updated upstream
 import { fetchTreatmentsByPatientId, createTreatment, softDeleteTreatment } from './services/treatmentService.js';
+=======
+import { fetchTreatmentsByPatientId, fetchTreatmentCounts, createTreatment, updateTreatment, softDeleteTreatment } from './services/treatmentService.js';
+>>>>>>> Stashed changes
 import { showAlert, showModalAlert, initEnvironmentBanner } from './ui/alertBanner.js';
-import { initPatientTable, renderPatientsTable, appendPatientRow, removePatientRow, getCachedPatient } from './ui/patientTable.js';
+import { initPatientTable, renderPatientsTable, appendPatientRow, removePatientRow, updatePatientTreatmentCount, getCachedPatient } from './ui/patientTable.js';
 import { initPatientForm, loadPatientIntoForm, resetPatientForm, setFormLoading, getCurrentlyEditingId } from './ui/patientForm.js';
 import { initTreatmentModal, openTreatmentModal, closeTreatmentModal, renderTreatments, setTreatmentsLoading, getCurrentModalPatient } from './ui/treatmentModal.js';
 import { initVersionManager } from './version/versionManager.js';
 
 /**
- * Loads all active patients from the database and updates the table.
+ * Loads all active patients and their treatment counts from the database and updates the table.
  */
 async function loadPatients() {
-    const { data: patients, error } = await fetchActivePatients();
+    const [{ data: patients, error: pError }, { data: countsMap }] = await Promise.all([
+        fetchActivePatients(),
+        fetchTreatmentCounts()
+    ]);
 
-    if (error) {
-        showAlert(`No se pudo conectar a la base de datos: ${error.message || 'Verifique su conexión.'}`);
+    if (pError) {
+        showAlert(`No se pudo conectar a la base de datos: ${pError.message || 'Verifique su conexión.'}`);
         return;
     }
 
-    renderPatientsTable(patients || []);
+    renderPatientsTable(patients || [], countsMap || new Map());
 }
 
 /**
@@ -41,6 +48,9 @@ async function loadPatientTreatments(patientId) {
     }
 
     renderTreatments(treatments || []);
+
+    // Synchronize the count badge in the patients table
+    updatePatientTreatmentCount(patientId, (treatments || []).length);
 }
 
 /**
@@ -66,7 +76,7 @@ async function handlePatientSubmit({ isEdit, patientId, formData }) {
                 showAlert(`Error al guardar el paciente: ${error.message}`);
             } else {
                 if (data) {
-                    appendPatientRow(data);
+                    appendPatientRow(data, 0);
                 }
                 resetPatientForm();
                 showAlert('Paciente guardado exitosamente.', false);

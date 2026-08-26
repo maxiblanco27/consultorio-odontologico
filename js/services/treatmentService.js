@@ -84,3 +84,64 @@ export async function softDeleteTreatment(treatmentId) {
         return { success: false, error: err };
     }
 }
+<<<<<<< Updated upstream
+=======
+
+/**
+ * Updates an existing treatment record in the database.
+ * @param {number|string} treatmentId - ID of the treatment to update.
+ * @param {Object} treatmentData - Updated treatment fields.
+ * @returns {Promise<{ data: Object|null, error: Error|null }>}
+ */
+export async function updateTreatment(treatmentId, treatmentData) {
+    try {
+        const { data, error } = await supabaseClient
+            .from('treatments')
+            .update(treatmentData)
+            .eq('id', treatmentId)
+            .select();
+
+        if (error) {
+            console.error('Error updating treatment:', error);
+            return { data: null, error };
+        }
+
+        return { data: data ? data[0] : null, error: null };
+    } catch (err) {
+        console.error('Unexpected error in updateTreatment:', err);
+        return { data: null, error: err };
+    }
+}
+
+/**
+ * Fetches a Map of active treatment counts grouped by patient_id.
+ * @returns {Promise<{ data: Map<number, number>|null, error: Error|null }>}
+ */
+export async function fetchTreatmentCounts() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('treatments')
+            .select('patient_id')
+            .eq('is_active', true);
+
+        if (error) {
+            console.error('Error fetching treatment counts:', error);
+            return { data: null, error };
+        }
+
+        const countMap = new Map();
+        (data || []).forEach(item => {
+            const pid = Number(item.patient_id);
+            const current = countMap.get(pid) || 0;
+            countMap.set(pid, current + 1);
+        });
+
+        return { data: countMap, error: null };
+    } catch (err) {
+        console.error('Unexpected error in fetchTreatmentCounts:', err);
+        return { data: null, error: err };
+    }
+}
+
+
+>>>>>>> Stashed changes
