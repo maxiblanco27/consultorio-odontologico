@@ -271,7 +271,8 @@ table {
 th, td {
     padding: 12px 14px;
     text-align: left;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #edf2f7;
     vertical-align: middle;
     white-space: pre-line;
     word-wrap: break-word;
@@ -282,12 +283,17 @@ th {
     background: #f8fafc;
     color: #475569;
     font-weight: 600;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid #cbd5e1;
+    border-right: 1px solid #e2e8f0;
     font-size: 0.9rem;
 }
 
 th:nth-child(1) { width: 16%; }
-th:last-child, td:last-child { width: 145px; min-width: 135px; }
+th:last-child, td:last-child {
+    border-right: none;
+    width: 145px;
+    min-width: 135px;
+}
 
 /* Zebra Striping: Fila Impar (1, 3, 5...) y Fila Par (2, 4, 6...) */
 tbody tr:nth-child(odd),
@@ -632,16 +638,23 @@ tr.is-hidden {
     font-weight: 600;
     font-size: 0.85rem;
     padding: 10px 12px;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid #cbd5e1;
+    border-right: 1px solid #e2e8f0;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
 
 .treatments-table td {
     padding: 10px 12px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #edf2f7;
     font-size: 0.9rem;
     vertical-align: top;
+}
+
+.treatments-table th:last-child,
+.treatments-table td:last-child {
+    border-right: none;
 }
 
 .treatments-table tbody tr {
@@ -956,16 +969,23 @@ tr.is-hidden {
     font-weight: 600;
     font-size: 0.85rem;
     padding: 10px 12px;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid #cbd5e1;
+    border-right: 1px solid #e2e8f0;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
 
 .payments-table td {
     padding: 10px 12px;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+    border-right: 1px solid #edf2f7;
     font-size: 0.9rem;
     vertical-align: middle;
+}
+
+.payments-table th:last-child,
+.payments-table td:last-child {
+    border-right: none;
 }
 
 .payments-table tbody tr {
