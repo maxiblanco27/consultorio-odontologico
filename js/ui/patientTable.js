@@ -86,6 +86,17 @@ export function appendPatientRow(patient) {
         existingRow.remove();
     }
 
+    const treatmentsCount = typeof patient.treatments_count === 'number'
+        ? patient.treatments_count
+        : (Array.isArray(patient.treatments) && patient.treatments.length > 0 && typeof patient.treatments[0]?.count === 'number'
+            ? patient.treatments[0].count
+            : 0);
+
+    const treatmentNoun = treatmentsCount === 1 ? 'tratamiento registrado' : 'tratamientos registrados';
+    const ariaLabel = `Historial de tratamientos, ${treatmentsCount} ${treatmentNoun}`;
+    const titleText = `Ver Historial Clínico (${treatmentsCount} ${treatmentsCount === 1 ? 'tratamiento' : 'tratamientos'})`;
+    const badgeClass = treatmentsCount > 0 ? 'badge-active' : 'badge-zero';
+
     const row = document.createElement('tr');
     row.setAttribute('data-patient-id', patient.id);
 
@@ -96,8 +107,10 @@ export function appendPatientRow(patient) {
         <td>${escapeHtml(patient.phone || '-')}</td>
         <td>${escapeHtml(patient.health_insurance || '-')}</td>
         <td class="action-buttons-cell">
-            <button type="button" class="btn-historial" data-action="history" data-id="${patient.id}" title="Ver Historial Clínico">
-                <i class="fas fa-notes-medical"></i> Historial
+            <button type="button" class="btn-historial" data-action="history" data-id="${patient.id}" title="${titleText}" aria-label="${ariaLabel}">
+                <i class="fas fa-notes-medical"></i>
+                <span>Historial</span>
+                <span class="treatment-badge ${badgeClass}">${treatmentsCount}</span>
             </button>
             <button type="button" class="btn-modificar" data-action="edit" data-id="${patient.id}" title="Ver y modificar datos del paciente">
                 <i class="fas fa-user-edit"></i> Ver Paciente
