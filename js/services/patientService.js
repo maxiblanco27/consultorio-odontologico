@@ -6,15 +6,19 @@
 import { supabaseClient } from '../config/supabaseClient.js';
 
 /**
- * Fetches all active patients ordered by ID descending.
+ * Fetches all active patients with active treatments count ordered by ID descending.
  * @returns {Promise<{ data: Array<Object>|null, error: Error|null }>}
  */
 export async function fetchActivePatients() {
     try {
         const { data, error } = await supabaseClient
             .from('patients')
-            .select('*')
+            .select(`
+                *,
+                treatments(count)
+            `)
             .eq('is_active', true)
+            .eq('treatments.is_active', true)
             .order('id', { ascending: false });
 
         if (error) {
@@ -22,7 +26,18 @@ export async function fetchActivePatients() {
             return { data: null, error };
         }
 
-        return { data: data || [], error: null };
+        // Normalize treatments count for easy access across the application
+        const normalizedData = (data || []).map(patient => {
+            const count = Array.isArray(patient.treatments) && patient.treatments.length > 0
+                ? (patient.treatments[0]?.count ?? 0)
+                : 0;
+            return {
+                ...patient,
+                treatments_count: count
+            };
+        });
+
+        return { data: normalizedData, error: null };
     } catch (err) {
         console.error('Unexpected error in fetchActivePatients:', err);
         return { data: null, error: err };

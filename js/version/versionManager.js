@@ -3,8 +3,8 @@
  * @description Manages application version display and update polling.
  */
 
-export const CURRENT_VERSION = 18;
-export const VERSION_CODENAME = 'Finanz';
+export const CURRENT_VERSION = 19;
+export const VERSION_CODENAME = 'Contador';
 
 /**
  * Initializes the version display and update polling schedule.

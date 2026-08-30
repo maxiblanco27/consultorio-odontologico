@@ -234,6 +234,7 @@ async function handleAddTreatment(treatmentData) {
 
     showModalAlert('Tratamiento registrado exitosamente.', false);
     await loadPatientTreatments(treatmentData.patient_id);
+    await loadPatients();
     return true;
 }
 
@@ -279,6 +280,7 @@ async function handleDeleteTreatment(treatmentId, patientId) {
 
     showModalAlert('Tratamiento eliminado correctamente.', false);
     await loadPatientTreatments(patientId);
+    await loadPatients();
 }
 
 /**
