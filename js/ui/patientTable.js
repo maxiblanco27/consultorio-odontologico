@@ -38,19 +38,51 @@ export function getCachedPatient(id) {
 }
 
 /**
- * Sets up live search filtering on the patients table.
+ * Recalculates visual zebra striping parity (data-row-parity="odd|even") across currently visible patient rows.
+ */
+export function recalculatePatientRowsParity() {
+    const rows = document.querySelectorAll('#patientsList tr');
+    let visibleIndex = 0;
+    rows.forEach(row => {
+        const isHidden = row.classList.contains('is-hidden') || row.style.display === 'none';
+        if (!isHidden) {
+            row.setAttribute('data-row-parity', visibleIndex % 2 === 0 ? 'odd' : 'even');
+            visibleIndex++;
+        } else {
+            row.removeAttribute('data-row-parity');
+        }
+    });
+}
+
+/**
+ * Sets up live search filtering on the patients table with dynamic zebra striping recalculation.
  */
 function setupSearchFilter() {
     const searchInput = document.getElementById('searchInput');
     if (!searchInput) return;
 
-    searchInput.addEventListener('keyup', function () {
-        const filter = this.value.toLowerCase().trim();
+    const filterRows = () => {
+        const filter = searchInput.value.toLowerCase().trim();
         const rows = document.querySelectorAll('#patientsList tr');
+        let visibleCount = 0;
+
         rows.forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(filter) ? '' : 'none';
+            const matches = !filter || row.innerText.toLowerCase().includes(filter);
+            if (matches) {
+                row.style.display = '';
+                row.classList.remove('is-hidden');
+                row.setAttribute('data-row-parity', visibleCount % 2 === 0 ? 'odd' : 'even');
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+                row.classList.add('is-hidden');
+                row.removeAttribute('data-row-parity');
+            }
         });
-    });
+    };
+
+    searchInput.addEventListener('input', filterRows);
+    searchInput.addEventListener('keyup', filterRows);
 }
 
 /**
@@ -64,17 +96,25 @@ export function renderPatientsTable(patients) {
     listContainer.innerHTML = '';
     patientsCache.clear();
 
-    patients.forEach(patient => {
+    patients.forEach((patient, index) => {
         patientsCache.set(patient.id, patient);
-        appendPatientRow(patient);
+        appendPatientRow(patient, false);
     });
+
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput && searchInput.value.trim() !== '') {
+        searchInput.dispatchEvent(new Event('input'));
+    } else {
+        recalculatePatientRowsParity();
+    }
 }
 
 /**
  * Appends a single patient row to the table.
  * @param {Object} patient - Patient data object.
+ * @param {boolean} [recalcParity=true] - Whether to recalibrate visible row parity immediately.
  */
-export function appendPatientRow(patient) {
+export function appendPatientRow(patient, recalcParity = true) {
     const listContainer = document.getElementById('patientsList');
     if (!listContainer) return;
 
@@ -135,6 +175,10 @@ export function appendPatientRow(patient) {
     });
 
     listContainer.appendChild(row);
+
+    if (recalcParity) {
+        recalculatePatientRowsParity();
+    }
 }
 
 /**
@@ -148,6 +192,7 @@ export function removePatientRow(patientId) {
     if (row) {
         row.remove();
     }
+    recalculatePatientRowsParity();
 }
 
 /**
