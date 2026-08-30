@@ -354,10 +354,37 @@ tbody tr:hover {
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s;
+    white-space: nowrap;
 }
 
 .btn-historial:hover {
     background: #138496;
+}
+
+.treatment-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-radius: 10px;
+    line-height: 1;
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.treatment-badge.badge-active {
+    background: #ffffff;
+    color: #0c5460;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.treatment-badge.badge-zero {
+    background: rgba(255, 255, 255, 0.25);
+    color: #ffffff;
 }
 
 /* ==========================================
