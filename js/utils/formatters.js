@@ -43,3 +43,38 @@ export function getTodayDateString() {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
+
+/**
+ * Formats an ISO timestamp string into DD/MM/YYYY HH:mm.
+ * @param {string} isoStr - ISO timestamp string.
+ * @returns {string} Formatted date/time string (e.g. "06/09/2026 12:30") or "-" if empty.
+ */
+export function formatDateTime(isoStr) {
+    if (!isoStr) return '-';
+    try {
+        const date = new Date(isoStr);
+        if (isNaN(date.getTime())) return isoStr;
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+    } catch {
+        return isoStr;
+    }
+}
+
+/**
+ * Helper to escape HTML characters to prevent XSS injection.
+ * @param {string} str - Raw string.
+ * @returns {string} Escaped string.
+ */
+export function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}

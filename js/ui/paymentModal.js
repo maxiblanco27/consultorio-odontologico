@@ -317,8 +317,16 @@ export function renderPaymentsList(payments) {
         const row = document.createElement('tr');
         row.setAttribute('data-payment-id', payment.id);
 
+        let auditSub = '';
+        if (payment.created_by_name) {
+            auditSub = `<div class="treatment-audit-subtext" title="Registrado por"><i class="far fa-user"></i> por <strong>${escapeHtml(payment.created_by_name)}</strong></div>`;
+        }
+
         row.innerHTML = `
-            <td><strong>${formatDate(payment.payment_date)}</strong></td>
+            <td>
+                <strong>${formatDate(payment.payment_date)}</strong>
+                ${auditSub}
+            </td>
             <td><strong class="text-success">${formatCurrency(payment.amount)}</strong></td>
             <td>${escapeHtml(payment.notes || '-')}</td>
             <td class="text-center">
