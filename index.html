@@ -77,14 +77,20 @@
 
     <section class="card">
         <div class="table-header-toolbar">
-            <h2 class="section-title">Historial de Consultas</h2>
+            <div class="table-title-container">
+                <h2 class="section-title">Historial de Consultas</h2>
+                <div id="patientVolumeBadge" class="patients-volume-badge" title="Total del padrón de pacientes">
+                    <i class="fas fa-users"></i>
+                    <span id="patientVolumeText">Total de pacientes registrados: 0</span>
+                </div>
+            </div>
             <div class="search-container">
                 <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por nombre o DNI...">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre o DNI..." aria-label="Buscar pacientes">
             </div>
         </div>
 
-        <div class="table-container">
+        <div class="table-container" id="patientTableContainer">
             <table id="patientsTable">
                <thead>
                     <tr>
@@ -98,6 +104,34 @@
                 </thead>
                 <tbody id="patientsList"></tbody>
             </table>
+        </div>
+
+        <!-- Controles de Paginación -->
+        <div class="table-pagination-footer" id="patientPaginationFooter">
+            <div class="pagination-info" id="paginationRangeText">
+                Mostrando 0 de 0 pacientes
+            </div>
+            <div class="pagination-controls">
+                <div class="pagination-page-size">
+                    <label for="pageSizeSelect">Mostrar:</label>
+                    <select id="pageSizeSelect" class="page-size-select" aria-label="Cantidad de pacientes por página">
+                        <option value="10" selected>10</option>
+                        <option value="25">25</option>
+                        <option value="50">50</option>
+                    </select>
+                </div>
+                <div class="pagination-nav">
+                    <button type="button" id="prevPageBtn" class="btn-pagination" disabled aria-label="Página anterior">
+                        <i class="fas fa-chevron-left"></i> Anterior
+                    </button>
+                    <span class="pagination-current-page" id="paginationCurrentPage">
+                        Página 1 de 1
+                    </span>
+                    <button type="button" id="nextPageBtn" class="btn-pagination" disabled aria-label="Página siguiente">
+                        Siguiente <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
         </div>
     </section>
 
