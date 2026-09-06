@@ -5,16 +5,45 @@
 
 import { supabaseClient } from '../config/supabaseClient.js';
 
+export const AUTH_DEFAULT_DOMAIN = '@consultorio.local';
+
 /**
- * Authenticates a user with email and password.
- * @param {string} email - User's email address.
+ * Normalizes an identifier (username or email).
+ * If no '@' is present, appends the default domain.
+ * @param {string} identifier - Username or email.
+ * @returns {string} Normalized email string.
+ */
+export function normalizeAuthIdentifier(identifier) {
+    const clean = (identifier || '').trim().toLowerCase();
+    if (!clean) return '';
+    return clean.includes('@') ? clean : `${clean}${AUTH_DEFAULT_DOMAIN}`;
+}
+
+/**
+ * Extracts a friendly display name from an email or identifier.
+ * @param {string} email - Email address.
+ * @returns {string} Display username.
+ */
+export function getDisplayUsername(email) {
+    if (!email) return 'Usuario';
+    const clean = email.trim();
+    if (clean.toLowerCase().endsWith(AUTH_DEFAULT_DOMAIN)) {
+        return clean.slice(0, -AUTH_DEFAULT_DOMAIN.length);
+    }
+    return clean.split('@')[0];
+}
+
+/**
+ * Authenticates a user with username or email and password.
+ * @param {string} identifier - User's username or email address.
  * @param {string} password - User's password.
  * @returns {Promise<{ user: Object|null, session: Object|null, error: Error|null }>}
  */
-export async function signIn(email, password) {
+export async function signIn(identifier, password) {
     try {
+        const email = normalizeAuthIdentifier(identifier);
         const { data, error } = await supabaseClient.auth.signInWithPassword({
-            email: email.trim(),
+            email,
             password
         });
 

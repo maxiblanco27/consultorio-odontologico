@@ -4,13 +4,15 @@
  * password visibility toggling, and user session badge in header.
  */
 
+import { getDisplayUsername } from '../services/authService.js';
+
 let onLoginCallback = null;
 let onLogoutCallback = null;
 
 /**
  * Initializes the authentication view elements, listeners, and handlers.
  * @param {Object} options - Configuration options.
- * @param {Function} options.onLogin - Async callback with (email, password).
+ * @param {Function} options.onLogin - Async callback with (identifier, password).
  * @param {Function} options.onLogout - Async callback when logout is triggered.
  */
 export function initAuthView({ onLogin, onLogout }) {
@@ -26,16 +28,17 @@ export function initAuthView({ onLogin, onLogout }) {
             e.preventDefault();
             clearLoginError();
 
-            const email = document.getElementById('loginEmail')?.value.trim() || '';
+            const userInput = document.getElementById('loginUsername') || document.getElementById('loginEmail');
+            const identifier = userInput?.value.trim() || '';
             const password = document.getElementById('loginPassword')?.value || '';
 
-            if (!email || !password) {
-                showLoginError('Por favor ingrese su correo electrónico y contraseña.');
+            if (!identifier || !password) {
+                showLoginError('Por favor ingrese su usuario o correo electrónico y contraseña.');
                 return;
             }
 
             if (onLoginCallback) {
-                await onLoginCallback(email, password);
+                await onLoginCallback(identifier, password);
             }
         });
     }
@@ -108,8 +111,9 @@ export function showAppView(user) {
     }
 
     if (userEmailDisplay && user) {
-        userEmailDisplay.textContent = user.email || 'Usuario';
-        userEmailDisplay.title = `Sesión activa: ${user.email}`;
+        const displayName = getDisplayUsername(user.email);
+        userEmailDisplay.textContent = displayName;
+        userEmailDisplay.title = `Sesión activa: ${user.email || displayName}`;
     }
 }
 
@@ -119,7 +123,7 @@ export function showAppView(user) {
  */
 export function setLoginLoading(isLoading) {
     const submitBtn = document.getElementById('loginSubmitBtn');
-    const emailInput = document.getElementById('loginEmail');
+    const userInput = document.getElementById('loginUsername') || document.getElementById('loginEmail');
     const passwordInput = document.getElementById('loginPassword');
 
     if (submitBtn) {
@@ -131,7 +135,7 @@ export function setLoginLoading(isLoading) {
         }
     }
 
-    if (emailInput) emailInput.disabled = isLoading;
+    if (userInput) userInput.disabled = isLoading;
     if (passwordInput) passwordInput.disabled = isLoading;
 }
 
