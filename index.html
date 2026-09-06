@@ -16,13 +16,65 @@
 <body>
 
 <!-- App Version Display (Top Right) -->
-<div class="app-version-badge">
-    <span id="appVersionDisplay"></span>
+<div class="top-nav-bar">
+    <div class="app-version-badge">
+        <span id="appVersionDisplay"></span>
+    </div>
 </div>
 
-<div class="container">
-    <header>
-        <h1>🦷 Registro de Pacientes</h1>
+<!-- Portal de Autenticación / Login -->
+<div id="authContainer" class="auth-wrapper" style="display: none;">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo"><i class="fas fa-tooth"></i></div>
+            <h2>Consultorio Odontológico</h2>
+            <p class="auth-subtitle">Ingrese con su cuenta profesional para acceder</p>
+        </div>
+        
+        <div id="loginAlert" class="alert-banner alert-error" style="display: none;"></div>
+
+        <form id="loginForm" class="auth-form" novalidate>
+            <div class="auth-field">
+                <label for="loginUsername"><i class="fas fa-user"></i> Usuario o Correo</label>
+                <input type="text" id="loginUsername" placeholder="Ej: admin o profesional@consultorio.com" required autocomplete="username">
+            </div>
+            
+            <div class="auth-field">
+                <label for="loginPassword"><i class="fas fa-lock"></i> Contraseña</label>
+                <div class="password-input-wrapper">
+                    <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                    <button type="button" id="togglePasswordBtn" class="btn-toggle-password" title="Mostrar/ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" id="loginSubmitBtn" class="btn-login-submit">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </button>
+        </form>
+        
+        <div class="auth-footer">
+            <small><i class="fas fa-shield-alt"></i> Acceso restringido al personal del consultorio</small>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="appContainer" style="display: none;">
+    <header class="app-header">
+        <div class="header-brand">
+            <h1>🦷 Registro de Pacientes</h1>
+        </div>
+        <div id="userHeaderBadge" class="user-session-badge" style="display: none;">
+            <div class="user-badge-info">
+                <i class="fas fa-user-circle"></i>
+                <span class="user-label">Usuario:</span>
+                <strong id="userEmailDisplay" class="user-name-text"></strong>
+            </div>
+            <button type="button" id="logoutBtn" class="btn-logout" title="Cerrar sesión" aria-label="Cerrar sesión">
+                <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+            </button>
+        </div>
     </header>
 
     <!-- Banner de nueva versión del sistema -->
@@ -71,7 +123,10 @@
                     <textarea id="treatment" rows="5" placeholder="Escriba aquí las observaciones generales..."></textarea>
                 </div>
             </div>
-            <button type="submit" class="btn-guardar" id="saveBtn">Guardar</button>
+            <div class="form-footer-actions">
+                <button type="submit" class="btn-guardar" id="saveBtn">Guardar</button>
+                <div id="patientAuditInfo" class="audit-info-badge" style="display: none;"></div>
+            </div>
         </form>
     </section>
 

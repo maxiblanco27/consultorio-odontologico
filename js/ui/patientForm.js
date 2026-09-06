@@ -3,6 +3,8 @@
  * @description UI component for handling the patient registration and edition form.
  */
 
+import { formatDateTime, escapeHtml } from '../utils/formatters.js';
+
 let currentEditingId = null;
 let onSubmitHandler = null;
 
@@ -82,6 +84,26 @@ export function loadPatientIntoForm(patient) {
     }
     cancelBtn.style.display = 'block';
 
+    // Update audit information text if present
+    const auditEl = document.getElementById('patientAuditInfo');
+    if (auditEl) {
+        const editorName = patient.updated_by_name || (patient.updated_by ? 'Usuario' : '');
+        const creatorName = patient.created_by_name || (patient.created_by ? 'Usuario' : '');
+
+        if (patient.updated_at) {
+            const byText = editorName ? ` por <strong>${escapeHtml(editorName)}</strong>` : '';
+            auditEl.innerHTML = `<i class="far fa-clock"></i> Última modificación: <strong>${formatDateTime(patient.updated_at)}</strong>${byText}`;
+            auditEl.style.display = 'inline-flex';
+        } else if (patient.created_at) {
+            const byText = creatorName ? ` por <strong>${escapeHtml(creatorName)}</strong>` : '';
+            auditEl.innerHTML = `<i class="far fa-calendar-alt"></i> Registrado el: <strong>${formatDateTime(patient.created_at)}</strong>${byText}`;
+            auditEl.style.display = 'inline-flex';
+        } else {
+            auditEl.innerHTML = '';
+            auditEl.style.display = 'none';
+        }
+    }
+
     // Smooth scroll to form top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -94,6 +116,12 @@ export function resetPatientForm() {
     if (form) form.reset();
 
     currentEditingId = null;
+
+    const auditEl = document.getElementById('patientAuditInfo');
+    if (auditEl) {
+        auditEl.innerHTML = '';
+        auditEl.style.display = 'none';
+    }
 
     const saveBtn = document.getElementById('saveBtn');
     if (saveBtn) {
