@@ -3,7 +3,7 @@
  * @description UI component for managing the clinical history modal, quick-add/edit treatment form, and evolutions list.
  */
 
-import { formatCurrency, formatDate, getTodayDateString } from '../utils/formatters.js';
+import { formatCurrency, formatDate, formatDateTime, getTodayDateString } from '../utils/formatters.js';
 import { showModalAlert } from './alertBanner.js';
 
 let currentPatient = null;
@@ -345,9 +345,19 @@ export function renderTreatments(treatments) {
             ? `<span class="badge-status badge-paid"><i class="fas fa-check-circle"></i> Saldado</span>`
             : `<span class="badge-status badge-pending"><i class="fas fa-clock"></i> ${formatCurrency(balance)}</span>`;
 
+        let auditSubtext = '';
+        if (treatment.updated_at) {
+            auditSubtext = `<div class="treatment-audit-subtext" title="Última modificación"><i class="far fa-clock"></i> Modificado: ${formatDateTime(treatment.updated_at)}</div>`;
+        } else if (treatment.created_at) {
+            auditSubtext = `<div class="treatment-audit-subtext" title="Fecha de registro"><i class="far fa-calendar-alt"></i> Creado: ${formatDateTime(treatment.created_at)}</div>`;
+        }
+
         row.innerHTML = `
             <td><strong>${formatDate(treatment.treatment_date)}</strong></td>
-            <td>${escapeHtml(treatment.description || '')}</td>
+            <td>
+                <div class="treatment-desc-text">${escapeHtml(treatment.description || '')}</div>
+                ${auditSubtext}
+            </td>
             <td><strong>${formatCurrency(treatment.cost)}</strong></td>
             <td>${formatCurrency(treatment.copayment || 0)}</td>
             <td><strong class="text-success">${formatCurrency(paid)}</strong></td>

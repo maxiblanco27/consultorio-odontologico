@@ -3,6 +3,8 @@
  * @description UI component for handling the patient registration and edition form.
  */
 
+import { formatDateTime } from '../utils/formatters.js';
+
 let currentEditingId = null;
 let onSubmitHandler = null;
 
@@ -82,6 +84,21 @@ export function loadPatientIntoForm(patient) {
     }
     cancelBtn.style.display = 'block';
 
+    // Update audit information text if present
+    const auditEl = document.getElementById('patientAuditInfo');
+    if (auditEl) {
+        if (patient.updated_at) {
+            auditEl.innerHTML = `<i class="far fa-clock"></i> Última modificación: <strong>${formatDateTime(patient.updated_at)}</strong>`;
+            auditEl.style.display = 'block';
+        } else if (patient.created_at) {
+            auditEl.innerHTML = `<i class="far fa-calendar-alt"></i> Registrado el: <strong>${formatDateTime(patient.created_at)}</strong>`;
+            auditEl.style.display = 'block';
+        } else {
+            auditEl.innerHTML = '';
+            auditEl.style.display = 'none';
+        }
+    }
+
     // Smooth scroll to form top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -94,6 +111,12 @@ export function resetPatientForm() {
     if (form) form.reset();
 
     currentEditingId = null;
+
+    const auditEl = document.getElementById('patientAuditInfo');
+    if (auditEl) {
+        auditEl.innerHTML = '';
+        auditEl.style.display = 'none';
+    }
 
     const saveBtn = document.getElementById('saveBtn');
     if (saveBtn) {

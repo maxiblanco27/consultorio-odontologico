@@ -7,7 +7,9 @@
 import { fetchActivePatients, createPatient, updatePatient, softDeletePatient } from './services/patientService.js';
 import { fetchTreatmentsByPatientId, createTreatment, updateTreatment, softDeleteTreatment } from './services/treatmentService.js';
 import { fetchPaymentsByTreatmentId, createPayment, softDeletePayment } from './services/paymentService.js';
+import { signIn, signOut, getSession, onAuthStateChange } from './services/authService.js';
 import { showAlert, showModalAlert, showPaymentModalAlert, initEnvironmentBanner } from './ui/alertBanner.js';
+import { initAuthView, showLoginView, showAppView, setLoginLoading, showLoginError } from './ui/authView.js';
 import { initPatientTable, renderPatientsTable, appendPatientRow, removePatientRow, getCachedPatient } from './ui/patientTable.js';
 import { initPatientForm, loadPatientIntoForm, resetPatientForm, setFormLoading, getCurrentlyEditingId } from './ui/patientForm.js';
 import { initTreatmentModal, openTreatmentModal, closeTreatmentModal, renderTreatments, setTreatmentsLoading, getCurrentModalPatient } from './ui/treatmentModal.js';
@@ -16,11 +18,14 @@ import { formatCurrency } from './utils/formatters.js';
 import { initVersionManager } from './version/versionManager.js';
 
 let activePaymentTreatment = null;
+let isAuthenticated = false;
 
 /**
  * Loads all active patients from the database and updates the table.
  */
 async function loadPatients() {
+    if (!isAuthenticated) return;
+
     const { data: patients, error } = await fetchActivePatients();
 
     if (error) {
@@ -283,10 +288,82 @@ async function handleDeleteTreatment(treatmentId, patientId) {
     await loadPatients();
 }
 
+let activeSessionUserId = null;
+
+/**
+ * Handles professional login attempt.
+ * @param {string} email - User email.
+ * @param {string} password - User password.
+ */
+async function handleLogin(email, password) {
+    setLoginLoading(true);
+    const { user, error } = await signIn(email, password);
+    setLoginLoading(false);
+
+    if (error) {
+        let msg = 'No se pudo iniciar sesión. Verifique sus credenciales.';
+        const errLower = (error.message || '').toLowerCase();
+        if (errLower.includes('invalid login credentials') || errLower.includes('invalid_grant')) {
+            msg = 'Correo electrónico o contraseña incorrectos. Por favor, intente nuevamente.';
+        } else if (errLower.includes('email not confirmed')) {
+            msg = 'El correo electrónico no ha sido confirmado aún en Supabase.';
+        } else if (error.message) {
+            msg = `Error al iniciar sesión: ${error.message}`;
+        }
+        showLoginError(msg);
+        return;
+    }
+
+    if (user) {
+        isAuthenticated = true;
+        activeSessionUserId = user.id;
+        showAppView(user);
+        await loadPatients();
+    }
+}
+
+/**
+ * Handles signing out the active professional.
+ */
+async function handleLogout() {
+    closePaymentModal();
+    closeTreatmentModal();
+    resetPatientForm();
+
+    const { error } = await signOut();
+    if (error) {
+        showAlert(`Error al cerrar sesión: ${error.message}`);
+        return;
+    }
+
+    isAuthenticated = false;
+    activeSessionUserId = null;
+    showLoginView();
+}
+
+/**
+ * Synchronizes application state with the active user session.
+ * @param {Object|null} session - Active Supabase session or null.
+ */
+async function syncSessionState(session) {
+    if (session && session.user) {
+        isAuthenticated = true;
+        showAppView(session.user);
+        if (activeSessionUserId !== session.user.id) {
+            activeSessionUserId = session.user.id;
+            await loadPatients();
+        }
+    } else {
+        isAuthenticated = false;
+        activeSessionUserId = null;
+        showLoginView();
+    }
+}
+
 /**
  * Initialize all modules when the DOM is ready.
  */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // 1. Initialize environment warning banner
     initEnvironmentBanner();
 
@@ -319,6 +396,18 @@ document.addEventListener('DOMContentLoaded', () => {
         onDeletePayment: handleDeletePayment
     });
 
-    // 7. Initial data fetch
-    loadPatients();
+    // 7. Initialize authentication UI component
+    initAuthView({
+        onLogin: handleLogin,
+        onLogout: handleLogout
+    });
+
+    // 8. Listen for auth state changes (SIGN_IN, SIGN_OUT, TOKEN_REFRESHED)
+    onAuthStateChange(async (event, session) => {
+        await syncSessionState(session);
+    });
+
+    // 9. Initial check for existing session
+    const { session } = await getSession();
+    await syncSessionState(session);
 });
