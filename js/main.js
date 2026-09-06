@@ -7,7 +7,7 @@
 import { fetchActivePatients, createPatient, updatePatient, softDeletePatient } from './services/patientService.js';
 import { fetchTreatmentsByPatientId, createTreatment, updateTreatment, softDeleteTreatment } from './services/treatmentService.js';
 import { fetchPaymentsByTreatmentId, createPayment, softDeletePayment } from './services/paymentService.js';
-import { signIn, signOut, getSession, onAuthStateChange } from './services/authService.js';
+import { signIn, signOut, getSession, onAuthStateChange, setCurrentUsername, getDisplayUsername } from './services/authService.js';
 import { showAlert, showModalAlert, showPaymentModalAlert, initEnvironmentBanner } from './ui/alertBanner.js';
 import { initAuthView, showLoginView, showAppView, setLoginLoading, showLoginError } from './ui/authView.js';
 import { initPatientTable, renderPatientsTable, appendPatientRow, removePatientRow, getCachedPatient } from './ui/patientTable.js';
@@ -317,6 +317,8 @@ async function handleLogin(email, password) {
     if (user) {
         isAuthenticated = true;
         activeSessionUserId = user.id;
+        const displayName = getDisplayUsername(user.email);
+        setCurrentUsername(displayName);
         showAppView(user);
         await loadPatients();
     }
@@ -338,6 +340,7 @@ async function handleLogout() {
 
     isAuthenticated = false;
     activeSessionUserId = null;
+    setCurrentUsername('Usuario');
     showLoginView();
 }
 
@@ -348,6 +351,8 @@ async function handleLogout() {
 async function syncSessionState(session) {
     if (session && session.user) {
         isAuthenticated = true;
+        const displayName = getDisplayUsername(session.user.email);
+        setCurrentUsername(displayName);
         showAppView(session.user);
         if (activeSessionUserId !== session.user.id) {
             activeSessionUserId = session.user.id;
@@ -356,6 +361,7 @@ async function syncSessionState(session) {
     } else {
         isAuthenticated = false;
         activeSessionUserId = null;
+        setCurrentUsername('Usuario');
         showLoginView();
     }
 }

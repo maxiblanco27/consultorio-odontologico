@@ -64,3 +64,17 @@ export function formatDateTime(isoStr) {
         return isoStr;
     }
 }
+
+/**
+ * Helper to escape HTML characters to prevent XSS injection.
+ * @param {string} str - Raw string.
+ * @returns {string} Escaped string.
+ */
+export function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}

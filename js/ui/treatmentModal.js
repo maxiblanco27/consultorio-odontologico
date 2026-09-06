@@ -346,10 +346,15 @@ export function renderTreatments(treatments) {
             : `<span class="badge-status badge-pending"><i class="fas fa-clock"></i> ${formatCurrency(balance)}</span>`;
 
         let auditSubtext = '';
+        const treatmentEditor = treatment.updated_by_name || '';
+        const treatmentCreator = treatment.created_by_name || '';
+
         if (treatment.updated_at) {
-            auditSubtext = `<div class="treatment-audit-subtext" title="Última modificación"><i class="far fa-clock"></i> Modificado: ${formatDateTime(treatment.updated_at)}</div>`;
+            const byText = treatmentEditor ? ` por <strong>${escapeHtml(treatmentEditor)}</strong>` : '';
+            auditSubtext = `<div class="treatment-audit-subtext" title="Última modificación"><i class="far fa-clock"></i> Modificado: ${formatDateTime(treatment.updated_at)}${byText}</div>`;
         } else if (treatment.created_at) {
-            auditSubtext = `<div class="treatment-audit-subtext" title="Fecha de registro"><i class="far fa-calendar-alt"></i> Creado: ${formatDateTime(treatment.created_at)}</div>`;
+            const byText = treatmentCreator ? ` por <strong>${escapeHtml(treatmentCreator)}</strong>` : '';
+            auditSubtext = `<div class="treatment-audit-subtext" title="Fecha de registro"><i class="far fa-calendar-alt"></i> Creado: ${formatDateTime(treatment.created_at)}${byText}</div>`;
         }
 
         row.innerHTML = `

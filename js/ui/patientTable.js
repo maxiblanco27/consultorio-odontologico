@@ -4,7 +4,7 @@
  * global volume metric indicator, and row actions.
  */
 
-import { formatDate } from '../utils/formatters.js';
+import { formatDate, formatDateTime } from '../utils/formatters.js';
 
 // Internal cache for loaded patients to enable quick lookups
 const patientsCache = new Map();
@@ -193,8 +193,18 @@ function createPatientRowElement(patient) {
     const row = document.createElement('tr');
     row.setAttribute('data-patient-id', patient.id);
 
+    let auditLine = '';
+    if (patient.updated_at && patient.updated_by_name) {
+        auditLine = `<div class="table-audit-subtext" title="Última modificación"><i class="far fa-clock"></i> Modif: ${formatDateTime(patient.updated_at)} (${escapeHtml(patient.updated_by_name)})</div>`;
+    } else if (patient.created_at && patient.created_by_name) {
+        auditLine = `<div class="table-audit-subtext" title="Fecha de registro"><i class="far fa-calendar-alt"></i> Reg: ${formatDateTime(patient.created_at)} (${escapeHtml(patient.created_by_name)})</div>`;
+    }
+
     row.innerHTML = `
-        <td><strong>${escapeHtml(patient.full_name || '')}</strong></td>
+        <td>
+            <strong>${escapeHtml(patient.full_name || '')}</strong>
+            ${auditLine}
+        </td>
         <td>${escapeHtml(patient.dni || '')}</td>
         <td>${formatDate(patient.birth_date)}</td>
         <td>${escapeHtml(patient.phone || '-')}</td>

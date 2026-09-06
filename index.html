@@ -15,15 +15,8 @@
 </head>
 <body>
 
-<!-- Top Navigation Bar: User Session & App Version -->
+<!-- App Version Display (Top Right) -->
 <div class="top-nav-bar">
-    <div id="userHeaderBadge" class="user-session-badge" style="display: none;">
-        <span class="user-avatar-icon"><i class="fas fa-user-circle"></i></span>
-        <span id="userEmailDisplay" class="user-email-text"></span>
-        <button type="button" id="logoutBtn" class="btn-logout" title="Cerrar sesión" aria-label="Cerrar sesión">
-            <i class="fas fa-sign-out-alt"></i> <span>Salir</span>
-        </button>
-    </div>
     <div class="app-version-badge">
         <span id="appVersionDisplay"></span>
     </div>
@@ -68,8 +61,20 @@
 </div>
 
 <div class="container" id="appContainer" style="display: none;">
-    <header>
-        <h1>🦷 Registro de Pacientes</h1>
+    <header class="app-header">
+        <div class="header-brand">
+            <h1>🦷 Registro de Pacientes</h1>
+        </div>
+        <div id="userHeaderBadge" class="user-session-badge" style="display: none;">
+            <div class="user-badge-info">
+                <i class="fas fa-user-circle"></i>
+                <span class="user-label">Usuario:</span>
+                <strong id="userEmailDisplay" class="user-name-text"></strong>
+            </div>
+            <button type="button" id="logoutBtn" class="btn-logout" title="Cerrar sesión" aria-label="Cerrar sesión">
+                <i class="fas fa-sign-out-alt"></i> <span>Cerrar Sesión</span>
+            </button>
+        </div>
     </header>
 
     <!-- Banner de nueva versión del sistema -->

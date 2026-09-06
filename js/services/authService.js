@@ -19,6 +19,24 @@ export function normalizeAuthIdentifier(identifier) {
     return clean.includes('@') ? clean : `${clean}${AUTH_DEFAULT_DOMAIN}`;
 }
 
+let activeUsername = 'Usuario';
+
+/**
+ * Stores the active username in memory.
+ * @param {string} name - Active username.
+ */
+export function setCurrentUsername(name) {
+    activeUsername = name || 'Usuario';
+}
+
+/**
+ * Retrieves the currently logged in username from memory.
+ * @returns {string} Active username.
+ */
+export function getCurrentUsername() {
+    return activeUsername;
+}
+
 /**
  * Extracts a friendly display name from an email or identifier.
  * @param {string} email - Email address.

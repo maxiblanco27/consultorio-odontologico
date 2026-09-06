@@ -3,7 +3,7 @@
  * @description UI component for handling the patient registration and edition form.
  */
 
-import { formatDateTime } from '../utils/formatters.js';
+import { formatDateTime, escapeHtml } from '../utils/formatters.js';
 
 let currentEditingId = null;
 let onSubmitHandler = null;
@@ -87,12 +87,17 @@ export function loadPatientIntoForm(patient) {
     // Update audit information text if present
     const auditEl = document.getElementById('patientAuditInfo');
     if (auditEl) {
+        const editorName = patient.updated_by_name || (patient.updated_by ? 'Usuario' : '');
+        const creatorName = patient.created_by_name || (patient.created_by ? 'Usuario' : '');
+
         if (patient.updated_at) {
-            auditEl.innerHTML = `<i class="far fa-clock"></i> Última modificación: <strong>${formatDateTime(patient.updated_at)}</strong>`;
-            auditEl.style.display = 'block';
+            const byText = editorName ? ` por <strong>${escapeHtml(editorName)}</strong>` : '';
+            auditEl.innerHTML = `<i class="far fa-clock"></i> Última modificación: <strong>${formatDateTime(patient.updated_at)}</strong>${byText}`;
+            auditEl.style.display = 'inline-flex';
         } else if (patient.created_at) {
-            auditEl.innerHTML = `<i class="far fa-calendar-alt"></i> Registrado el: <strong>${formatDateTime(patient.created_at)}</strong>`;
-            auditEl.style.display = 'block';
+            const byText = creatorName ? ` por <strong>${escapeHtml(creatorName)}</strong>` : '';
+            auditEl.innerHTML = `<i class="far fa-calendar-alt"></i> Registrado el: <strong>${formatDateTime(patient.created_at)}</strong>${byText}`;
+            auditEl.style.display = 'inline-flex';
         } else {
             auditEl.innerHTML = '';
             auditEl.style.display = 'none';
