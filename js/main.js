@@ -16,7 +16,7 @@ import { initTreatmentModal, openTreatmentModal, closeTreatmentModal, renderTrea
 import { initPaymentModal, openPaymentModal, closePaymentModal, updatePaymentModalState, setPaymentsLoading } from './ui/paymentModal.js';
 import { formatCurrency } from './utils/formatters.js';
 import { initVersionManager } from './version/versionManager.js';
-import { initTooltips } from './ui/tooltipHelper.js';
+import { initTooltips, triggerPatientHistorialGuide } from './ui/tooltipHelper.js';
 
 let activePaymentTreatment = null;
 let isAuthenticated = false;
@@ -35,6 +35,7 @@ async function loadPatients() {
     }
 
     renderPatientsTable(patients || []);
+    triggerPatientHistorialGuide();
 }
 
 /**

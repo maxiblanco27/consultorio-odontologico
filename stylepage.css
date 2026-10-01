@@ -1949,4 +1949,203 @@ tr.is-hidden {
     .info-tooltip-content::before {
         display: none !important;
     }
-}
+}
+
+/* ==========================================
+   SPOTLIGHT ACTION TOOLTIPS (CALLOUTS)
+   ========================================== */
+.spotlight-action-callout {
+    position: fixed;
+    z-index: 10080;
+    width: 290px;
+    max-width: min(320px, calc(100vw - 24px));
+    background: #0f172a;
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: #f1f5f9;
+    animation: calloutPopIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    pointer-events: auto;
+}
+
+@keyframes calloutPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(6px) scale(0.95);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.spotlight-action-callout.theme-blue {
+    border: 1px solid #38bdf8;
+    box-shadow: 0 14px 28px -4px rgba(15, 23, 42, 0.5), 0 0 16px rgba(56, 189, 248, 0.35);
+}
+
+.spotlight-action-callout.theme-green {
+    border: 1px solid #34d399;
+    box-shadow: 0 14px 28px -4px rgba(15, 23, 42, 0.5), 0 0 16px rgba(52, 211, 153, 0.35);
+}
+
+/* Pointer Arrow */
+.spotlight-action-callout::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #0f172a;
+    transform: rotate(45deg);
+    left: var(--arrow-x, 50%);
+    margin-left: -5px;
+}
+
+.spotlight-action-callout.arrow-down::after {
+    bottom: -6px;
+    border-right: 1px solid currentColor;
+    border-bottom: 1px solid currentColor;
+}
+
+.spotlight-action-callout.theme-blue.arrow-down::after {
+    border-color: #38bdf8;
+}
+
+.spotlight-action-callout.theme-green.arrow-down::after {
+    border-color: #34d399;
+}
+
+.spotlight-action-callout.arrow-up::after {
+    top: -6px;
+    border-left: 1px solid currentColor;
+    border-top: 1px solid currentColor;
+}
+
+.spotlight-action-callout.theme-blue.arrow-up::after {
+    border-color: #38bdf8;
+}
+
+.spotlight-action-callout.theme-green.arrow-up::after {
+    border-color: #34d399;
+}
+
+.callout-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    gap: 8px;
+}
+
+.callout-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.86rem;
+}
+
+.callout-title strong {
+    color: #ffffff;
+}
+
+.callout-title .text-blue {
+    color: #38bdf8;
+}
+
+.callout-title .text-green {
+    color: #34d399;
+}
+
+.callout-close-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 4px;
+    transition: color 0.15s;
+}
+
+.callout-close-btn:hover {
+    color: #ef4444;
+}
+
+.callout-body p {
+    margin: 0 0 10px 0;
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    line-height: 1.45;
+}
+
+.callout-footer {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-callout-ack {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 4px 11px;
+    border-radius: 5px;
+    font-size: 0.74rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.15s ease;
+}
+
+.btn-callout-ack:hover {
+    background: #0284c7;
+    border-color: #0284c7;
+}
+
+.theme-green .btn-callout-ack:hover {
+    background: #10b981;
+    border-color: #10b981;
+}
+
+/* Pulsing ring highlights on target buttons */
+@keyframes buttonPulseRingBlue {
+    0% {
+        box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.85);
+    }
+    60% {
+        box-shadow: 0 0 0 9px rgba(2, 132, 199, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(2, 132, 199, 0);
+    }
+}
+
+.target-spotlight-pulse {
+    animation: buttonPulseRingBlue 1.6s infinite ease-out !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+@keyframes buttonPulseRingGreen {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.85);
+    }
+    60% {
+        box-shadow: 0 0 0 9px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.target-spotlight-pulse-green {
+    animation: buttonPulseRingGreen 1.6s infinite ease-out !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+

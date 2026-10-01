@@ -184,7 +184,6 @@ export function openPaymentModal(treatment, patient, payments = []) {
 
     if (modalOverlay) {
         modalOverlay.style.display = 'flex';
-        openAssistantTooltip('#paymentFormTooltip', { autoCloseFormId: 'newPaymentForm' });
     }
 }
 
