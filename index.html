@@ -134,6 +134,25 @@
         <div class="table-header-toolbar">
             <div class="table-title-container">
                 <h2 class="section-title">Historial de Consultas</h2>
+                <div class="info-tooltip-wrapper">
+                    <button type="button" class="info-tooltip-btn" aria-label="Guía para registrar tratamientos" title="Guía para cargar tratamientos" aria-expanded="false">
+                        <i class="fas fa-question-circle"></i>
+                        <span class="info-tooltip-btn-text">¿Cómo cargar tratamientos?</span>
+                    </button>
+                    <div class="info-tooltip-content tooltip-left" role="tooltip">
+                        <div class="tooltip-header">
+                            <i class="fas fa-notes-medical tooltip-icon-blue"></i>
+                            <strong>¿Cómo cargar tratamientos?</strong>
+                            <button type="button" class="info-tooltip-close-btn" aria-label="Cerrar guía">&times;</button>
+                        </div>
+                        <ol class="tooltip-steps">
+                            <li>Localiza al paciente en esta tabla (puedes buscarlo por nombre o DNI).</li>
+                            <li>Haz clic en el botón azul <strong class="badge-tag-historial"><i class="fas fa-notes-medical"></i> Historial</strong> en la fila del paciente.</li>
+                            <li>En la ventana que se abre, completa el formulario <em>Registrar Nuevo Tratamiento</em> con fecha, costo, coseguro y detalle.</li>
+                            <li>Una vez guardado, también podrás administrar los <strong>aportes económicos</strong> de cada tratamiento.</li>
+                        </ol>
+                    </div>
+                </div>
                 <div id="patientVolumeBadge" class="patients-volume-badge" title="Total del padrón de pacientes">
                     <i class="fas fa-users"></i>
                     <span id="patientVolumeText">Total de pacientes registrados: 0</span>
@@ -204,7 +223,32 @@
             <div class="modal-body">
                 <!-- Formulario Rápido de Nuevo Tratamiento -->
                 <div class="treatment-form-section">
-                    <h3 class="subsection-title" id="treatmentFormTitle"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
+                    <div class="subsection-header-row">
+                        <h3 class="subsection-title" id="treatmentFormTitle"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
+                        <div class="info-tooltip-wrapper">
+                            <button type="button" class="info-tooltip-btn" aria-label="Guía para cargar un tratamiento" title="Guía para cargar un tratamiento" aria-expanded="false">
+                                <i class="fas fa-question-circle"></i>
+                                <span class="info-tooltip-btn-text">¿Cómo cargar?</span>
+                            </button>
+                            <div class="info-tooltip-content" role="tooltip">
+                                <div class="tooltip-header">
+                                    <i class="fas fa-tooth tooltip-icon-blue"></i>
+                                    <strong>Guía: Registrar Tratamiento</strong>
+                                    <button type="button" class="info-tooltip-close-btn" aria-label="Cerrar guía">&times;</button>
+                                </div>
+                                <ol class="tooltip-steps">
+                                    <li><strong>Fecha:</strong> Selecciona el día de la consulta odontológica.</li>
+                                    <li><strong>Costo ($):</strong> Ingresa el valor total del procedimiento.</li>
+                                    <li><strong>Coseguro ($):</strong> Ingresa el copago u orden de obra social (opcional).</li>
+                                    <li><strong>Detalle:</strong> Describe el procedimiento realizado o evolución clínica.</li>
+                                    <li><strong>Guardar:</strong> Haz clic en <em>Guardar Tratamiento</em> para registrarlo en el historial.</li>
+                                </ol>
+                                <div class="tooltip-tip tip-blue">
+                                    <i class="fas fa-lightbulb"></i> Podrás registrar cobros o pagos con el botón verde <strong>Aportes</strong> en la lista inferior de tratamientos.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <form id="newTreatmentForm">
                         <div class="treatment-form-grid">
                             <div class="field">
@@ -316,7 +360,31 @@
 
                 <!-- Formulario Rápido de Nuevo Aporte -->
                 <div class="payment-form-section">
-                    <h3 class="subsection-title"><i class="fas fa-plus-circle"></i> Registrar Nuevo Aporte</h3>
+                    <div class="subsection-header-row">
+                        <h3 class="subsection-title"><i class="fas fa-plus-circle"></i> Registrar Nuevo Aporte</h3>
+                        <div class="info-tooltip-wrapper">
+                            <button type="button" class="info-tooltip-btn" aria-label="Guía para cargar un aporte económico" title="Guía para cargar un aporte" aria-expanded="false">
+                                <i class="fas fa-question-circle"></i>
+                                <span class="info-tooltip-btn-text">¿Cómo cargar?</span>
+                            </button>
+                            <div class="info-tooltip-content" role="tooltip">
+                                <div class="tooltip-header">
+                                    <i class="fas fa-hand-holding-dollar tooltip-icon-green"></i>
+                                    <strong>Guía: Registrar Aporte Económico</strong>
+                                    <button type="button" class="info-tooltip-close-btn" aria-label="Cerrar guía">&times;</button>
+                                </div>
+                                <ol class="tooltip-steps">
+                                    <li><strong>Fecha:</strong> Selecciona la fecha en la que el paciente abona.</li>
+                                    <li><strong>Importe ($):</strong> Ingresa el importe pagado *(puedes pulsar el botón "Total" para saldar la deuda restante)*.</li>
+                                    <li><strong>Observaciones:</strong> Opcional. Detalla el medio de pago (Efectivo, Transferencia, etc.) o notas.</li>
+                                    <li><strong>Registrar:</strong> Haz clic en <em>Registrar Aporte</em> para imputar el abono.</li>
+                                </ol>
+                                <div class="tooltip-tip tip-green">
+                                    <i class="fas fa-lightbulb"></i> El saldo pendiente se recalcula automáticamente y el aporte queda registrado en la tabla inferior.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <form id="newPaymentForm">
                         <div class="payment-form-grid">
                             <div class="field">
