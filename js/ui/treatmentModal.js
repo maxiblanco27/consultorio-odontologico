@@ -5,6 +5,7 @@
 
 import { formatCurrency, formatDate, formatDateTime, getTodayDateString } from '../utils/formatters.js';
 import { showModalAlert } from './alertBanner.js';
+import { openAssistantTooltip, closeAllTooltips, triggerTreatmentAportesGuide, dismissActionTooltip } from './tooltipHelper.js';
 
 let currentPatient = null;
 let currentEditingTreatmentId = null;
@@ -259,6 +260,8 @@ export function openTreatmentModal(patient) {
 export function closeTreatmentModal() {
     currentPatient = null;
     resetTreatmentForm();
+    dismissActionTooltip();
+    closeAllTooltips();
     const modalOverlay = document.getElementById('historyModal');
     if (modalOverlay) {
         modalOverlay.style.display = 'none';
@@ -413,6 +416,9 @@ export function renderTreatments(treatments) {
 
     if (emptyElem) emptyElem.style.display = 'none';
     if (tableElem) tableElem.style.display = 'table';
+
+    // Trigger action spotlight over the first Aportes button (or form if none)
+    triggerTreatmentAportesGuide();
 }
 
 /**
