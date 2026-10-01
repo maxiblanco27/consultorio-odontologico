@@ -5,6 +5,7 @@
 
 import { formatCurrency, formatDate, formatDateTime, getTodayDateString } from '../utils/formatters.js';
 import { showModalAlert } from './alertBanner.js';
+import { openAssistantTooltip, closeAllTooltips } from './tooltipHelper.js';
 
 let currentPatient = null;
 let currentEditingTreatmentId = null;
@@ -250,6 +251,7 @@ export function openTreatmentModal(patient) {
     // Show modal
     if (modalOverlay) {
         modalOverlay.style.display = 'flex';
+        openAssistantTooltip('#treatmentFormTooltip', { autoCloseFormId: 'newTreatmentForm' });
     }
 }
 
@@ -259,6 +261,7 @@ export function openTreatmentModal(patient) {
 export function closeTreatmentModal() {
     currentPatient = null;
     resetTreatmentForm();
+    closeAllTooltips();
     const modalOverlay = document.getElementById('historyModal');
     if (modalOverlay) {
         modalOverlay.style.display = 'none';

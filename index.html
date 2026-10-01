@@ -225,16 +225,18 @@
                 <div class="treatment-form-section">
                     <div class="subsection-header-row">
                         <h3 class="subsection-title" id="treatmentFormTitle"><i class="fas fa-plus-circle"></i> Registrar Nuevo Tratamiento</h3>
-                        <div class="info-tooltip-wrapper">
-                            <button type="button" class="info-tooltip-btn" aria-label="Guía para cargar un tratamiento" title="Guía para cargar un tratamiento" aria-expanded="false">
-                                <i class="fas fa-question-circle"></i>
-                                <span class="info-tooltip-btn-text">¿Cómo cargar?</span>
+                        <div id="treatmentFormTooltip" class="info-tooltip-wrapper">
+                            <button type="button" class="info-tooltip-btn" aria-label="Asistente para registrar tratamientos" title="Abrir asistente de carga" aria-expanded="false">
+                                <i class="fas fa-magic"></i>
+                                <span class="info-tooltip-btn-text">Asistente</span>
                             </button>
                             <div class="info-tooltip-content" role="tooltip">
                                 <div class="tooltip-header">
-                                    <i class="fas fa-tooth tooltip-icon-blue"></i>
-                                    <strong>Guía: Registrar Tratamiento</strong>
-                                    <button type="button" class="info-tooltip-close-btn" aria-label="Cerrar guía">&times;</button>
+                                    <div class="tooltip-header-title">
+                                        <span class="assistant-tag"><i class="fas fa-robot"></i> Asistente</span>
+                                        <strong>¿Cómo registrar un tratamiento?</strong>
+                                    </div>
+                                    <button type="button" class="info-tooltip-close-btn" aria-label="Cerrar asistente">&times;</button>
                                 </div>
                                 <ol class="tooltip-steps">
                                     <li><strong>Fecha:</strong> Selecciona el día de la consulta odontológica.</li>
@@ -245,6 +247,11 @@
                                 </ol>
                                 <div class="tooltip-tip tip-blue">
                                     <i class="fas fa-lightbulb"></i> Podrás registrar cobros o pagos con el botón verde <strong>Aportes</strong> en la lista inferior de tratamientos.
+                                </div>
+                                <div class="tooltip-footer">
+                                    <button type="button" class="btn-tooltip-dismiss" data-focus-target="treatmentDate">
+                                        <i class="fas fa-check"></i> ¡Entendido! Empezar a cargar
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -362,16 +369,18 @@
                 <div class="payment-form-section">
                     <div class="subsection-header-row">
                         <h3 class="subsection-title"><i class="fas fa-plus-circle"></i> Registrar Nuevo Aporte</h3>
-                        <div class="info-tooltip-wrapper">
-                            <button type="button" class="info-tooltip-btn" aria-label="Guía para cargar un aporte económico" title="Guía para cargar un aporte" aria-expanded="false">
-                                <i class="fas fa-question-circle"></i>
-                                <span class="info-tooltip-btn-text">¿Cómo cargar?</span>
+                        <div id="paymentFormTooltip" class="info-tooltip-wrapper">
+                            <button type="button" class="info-tooltip-btn" aria-label="Asistente para registrar aportes económicos" title="Abrir asistente de carga" aria-expanded="false">
+                                <i class="fas fa-magic"></i>
+                                <span class="info-tooltip-btn-text">Asistente</span>
                             </button>
                             <div class="info-tooltip-content" role="tooltip">
                                 <div class="tooltip-header">
-                                    <i class="fas fa-hand-holding-dollar tooltip-icon-green"></i>
-                                    <strong>Guía: Registrar Aporte Económico</strong>
-                                    <button type="button" class="info-tooltip-close-btn" aria-label="Cerrar guía">&times;</button>
+                                    <div class="tooltip-header-title">
+                                        <span class="assistant-tag assistant-tag-green"><i class="fas fa-robot"></i> Asistente</span>
+                                        <strong>¿Cómo registrar un aporte?</strong>
+                                    </div>
+                                    <button type="button" class="info-tooltip-close-btn" aria-label="Cerrar asistente">&times;</button>
                                 </div>
                                 <ol class="tooltip-steps">
                                     <li><strong>Fecha:</strong> Selecciona la fecha en la que el paciente abona.</li>
@@ -381,6 +390,11 @@
                                 </ol>
                                 <div class="tooltip-tip tip-green">
                                     <i class="fas fa-lightbulb"></i> El saldo pendiente se recalcula automáticamente y el aporte queda registrado en la tabla inferior.
+                                </div>
+                                <div class="tooltip-footer">
+                                    <button type="button" class="btn-tooltip-dismiss btn-dismiss-green" data-focus-target="paymentAmount">
+                                        <i class="fas fa-check"></i> ¡Entendido! Registrar aporte
+                                    </button>
                                 </div>
                             </div>
                         </div>
