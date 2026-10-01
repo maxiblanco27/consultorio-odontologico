@@ -5,6 +5,7 @@
 
 import { formatCurrency, formatDate, getTodayDateString } from '../utils/formatters.js';
 import { showPaymentModalAlert } from './alertBanner.js';
+import { openAssistantTooltip, closeAllTooltips } from './tooltipHelper.js';
 
 let currentTreatment = null;
 let currentPatient = null;
@@ -192,6 +193,7 @@ export function openPaymentModal(treatment, patient, payments = []) {
 export function closePaymentModal() {
     currentTreatment = null;
     currentPatient = null;
+    closeAllTooltips();
     const modalOverlay = document.getElementById('paymentModal');
     if (modalOverlay) {
         modalOverlay.style.display = 'none';

@@ -16,6 +16,7 @@ import { initTreatmentModal, openTreatmentModal, closeTreatmentModal, renderTrea
 import { initPaymentModal, openPaymentModal, closePaymentModal, updatePaymentModalState, setPaymentsLoading } from './ui/paymentModal.js';
 import { formatCurrency } from './utils/formatters.js';
 import { initVersionManager } from './version/versionManager.js';
+import { initTooltips, triggerPatientHistorialGuide } from './ui/tooltipHelper.js';
 
 let activePaymentTreatment = null;
 let isAuthenticated = false;
@@ -34,6 +35,7 @@ async function loadPatients() {
     }
 
     renderPatientsTable(patients || []);
+    triggerPatientHistorialGuide();
 }
 
 /**
@@ -408,12 +410,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         onLogout: handleLogout
     });
 
-    // 8. Listen for auth state changes (SIGN_IN, SIGN_OUT, TOKEN_REFRESHED)
+    // 8. Initialize guidance tooltips
+    initTooltips();
+
+    // 9. Listen for auth state changes (SIGN_IN, SIGN_OUT, TOKEN_REFRESHED)
     onAuthStateChange(async (event, session) => {
         await syncSessionState(session);
     });
 
-    // 9. Initial check for existing session
+    // 10. Initial check for existing session
     const { session } = await getSession();
     await syncSessionState(session);
 });
